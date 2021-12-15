@@ -9,15 +9,7 @@ class Result implements JsonSerializable
     private $value;
 
     /**
-     * Create a new result instance.
-     */
-    public function __construct(float $value)
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * The value of the result.
+     * Get the value of the result.
      */
     public function getValue(): float
     {
@@ -32,5 +24,15 @@ class Result implements JsonSerializable
         return [
             'value' => $this->getValue(),
         ];
+    }
+
+    /**
+     * Set the value of the result.
+     */
+    public function setValue(float $value): self
+    {
+        $this->value = $value;
+
+        return $this;
     }
 }
