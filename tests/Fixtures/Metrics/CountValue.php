@@ -12,7 +12,7 @@ class CountValue extends Value
 {
     public function calculate(): Result
     {
-        return $this->count(User::class, null, 'signed_up_at');
+        return $this->count((new User())->newQuery(), null, 'signed_up_at');
     }
 
     public function getDescription(): string

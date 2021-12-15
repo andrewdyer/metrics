@@ -12,7 +12,7 @@ class MinValue extends Value
 {
     public function calculate(): Result
     {
-        return $this->min(Measurement::class, 'weight_kg', 'date');
+        return $this->min((new Measurement())->newQuery(), 'weight_kg', 'date');
     }
 
     public function getDescription(): string

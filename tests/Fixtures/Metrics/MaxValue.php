@@ -12,7 +12,7 @@ class MaxValue extends Value
 {
     public function calculate(): Result
     {
-        return $this->max(Measurement::class, 'weight_kg', 'date');
+        return $this->max((new Measurement())->newQuery(), 'weight_kg', 'date');
     }
 
     public function getDescription(): string

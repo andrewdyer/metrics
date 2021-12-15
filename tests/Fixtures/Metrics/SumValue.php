@@ -12,7 +12,7 @@ class SumValue extends Value
 {
     public function calculate(): Result
     {
-        return $this->sum(Nutrition::class, 'calories', 'date');
+        return $this->sum((new Nutrition())->newQuery(), 'calories', 'date');
     }
 
     public function getDescription(): string
