@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Measurement extends Model
 {
-    protected $fillable = ['time_of_measurement', 'user_id', 'weight_kg'];
+    protected $fillable = ['date', 'user_id', 'weight_kg'];
 
     public function user(): BelongsTo
     {

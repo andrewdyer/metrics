@@ -34,10 +34,10 @@ final class ValueTest extends MetricTest
     public function testCanCalculateAverage(): void
     {
         User::create(['first_name' => 'Andrew', 'last_name' => 'Dyer', 'signed_up_at' => '2020-05-04 11:23:24']);
-        Measurement::create(['weight_kg' => 68, 'user_id' => 1, 'time_of_measurement' => '2020-05-10 09:11:09']);
-        Measurement::create(['weight_kg' => 66, 'user_id' => 1, 'time_of_measurement' => '2020-05-15 10:22:56']);
-        Measurement::create(['weight_kg' => 66, 'user_id' => 1, 'time_of_measurement' => '2020-05-20 07:38:26']);
-        Measurement::create(['weight_kg' => 64, 'user_id' => 1, 'time_of_measurement' => '2020-05-25 07:20:49']);
+        Measurement::create(['date' => '2020-05-10 09:11:09', 'weight_kg' => 68, 'user_id' => 1]);
+        Measurement::create(['date' => '2020-05-15 10:22:56', 'weight_kg' => 66, 'user_id' => 1]);
+        Measurement::create(['date' => '2020-05-20 07:38:26', 'weight_kg' => 66, 'user_id' => 1]);
+        Measurement::create(['date' => '2020-05-25 07:20:49', 'weight_kg' => 64, 'user_id' => 1]);
 
         $result = (new AverageValue())->calculate();
 
@@ -58,11 +58,11 @@ final class ValueTest extends MetricTest
     public function testCanCalculateMax(): void
     {
         User::create(['first_name' => 'Andrew', 'last_name' => 'Dyer', 'signed_up_at' => '2020-05-04 11:23:24']);
-        Measurement::create(['weight_kg' => 72, 'user_id' => 1, 'time_of_measurement' => '2021-01-01 11:19:30']);
-        Measurement::create(['weight_kg' => 70, 'user_id' => 1, 'time_of_measurement' => '2021-02-01 10:33:18']);
-        Measurement::create(['weight_kg' => 67, 'user_id' => 1, 'time_of_measurement' => '2021-03-01 09:48:12']);
-        Measurement::create(['weight_kg' => 66, 'user_id' => 1, 'time_of_measurement' => '2021-04-01 09:26:04']);
-        Measurement::create(['weight_kg' => 65, 'user_id' => 1, 'time_of_measurement' => '2021-05-01 11:56:42']);
+        Measurement::create(['date' => '2021-01-01 11:19:30', 'weight_kg' => 72, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-02-01 10:33:18', 'weight_kg' => 70, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-03-01 09:48:12', 'weight_kg' => 67, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-04-01 09:26:04', 'weight_kg' => 66, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-05-01 11:56:42', 'weight_kg' => 65, 'user_id' => 1]);
 
         $result = (new MaxValue())->calculate();
 
@@ -72,11 +72,11 @@ final class ValueTest extends MetricTest
     public function testCanCalculateMin(): void
     {
         User::create(['first_name' => 'Andrew', 'last_name' => 'Dyer', 'signed_up_at' => '2020-05-04 11:23:24']);
-        Measurement::create(['weight_kg' => 72, 'user_id' => 1, 'time_of_measurement' => '2021-01-01 11:19:30']);
-        Measurement::create(['weight_kg' => 70, 'user_id' => 1, 'time_of_measurement' => '2021-02-01 10:33:18']);
-        Measurement::create(['weight_kg' => 67, 'user_id' => 1, 'time_of_measurement' => '2021-03-01 09:48:12']);
-        Measurement::create(['weight_kg' => 66, 'user_id' => 1, 'time_of_measurement' => '2021-04-01 09:26:04']);
-        Measurement::create(['weight_kg' => 65, 'user_id' => 1, 'time_of_measurement' => '2021-05-01 11:56:42']);
+        Measurement::create(['date' => '2021-01-01 11:19:30', 'weight_kg' => 72, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-02-01 10:33:18', 'weight_kg' => 70, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-03-01 09:48:12', 'weight_kg' => 67, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-04-01 09:26:04', 'weight_kg' => 66, 'user_id' => 1]);
+        Measurement::create(['date' => '2021-05-01 11:56:42', 'weight_kg' => 65, 'user_id' => 1]);
 
         $result = (new MinValue())->calculate();
 
@@ -114,7 +114,7 @@ final class ValueTest extends MetricTest
     {
         Capsule::schema()->create('measurements', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('time_of_measurement');
+            $table->timestamp('date');
             $table->unsignedInteger('user_id');
             $table->string('weight_kg');
             $table->timestamps();

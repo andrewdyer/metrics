@@ -12,7 +12,7 @@ class AverageValue extends Value
 {
     public function calculate(): Result
     {
-        return $this->average(Measurement::class, 'weight_kg', 'time_of_measurement');
+        return $this->average(Measurement::class, 'weight_kg', 'date');
     }
 
     public function getDescription(): string
