@@ -10,11 +10,16 @@ use Anddye\Metrics\Tests\Fixtures\Metrics\SumValue;
 use Anddye\Metrics\Tests\Fixtures\Models\Measurement;
 use Anddye\Metrics\Tests\Fixtures\Models\Nutrition;
 use Anddye\Metrics\Tests\Fixtures\Models\User;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Database\Schema\Blueprint;
+use Anddye\Metrics\Tests\Traits\Measurements;
+use Anddye\Metrics\Tests\Traits\Nutritions;
+use Anddye\Metrics\Tests\Traits\Users;
 
 final class ValueTest extends MetricTest
 {
+    use Measurements;
+    use Nutritions;
+    use Users;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -93,62 +98,5 @@ final class ValueTest extends MetricTest
         $result = (new SumValue())->calculate();
 
         $this->assertEquals(426, $result->getValue());
-    }
-
-    protected function dropMeasurementsTable(): void
-    {
-        Capsule::schema()->drop('measurements');
-    }
-
-    protected function dropNutritionTable(): void
-    {
-        Capsule::schema()->drop('nutrition');
-    }
-
-    protected function dropUsersTable(): void
-    {
-        Capsule::schema()->drop('users');
-    }
-
-    protected function migrateMeasurementsTable(): void
-    {
-        Capsule::schema()->create('measurements', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamp('date');
-            $table->unsignedInteger('user_id');
-            $table->string('weight_kg');
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-        });
-    }
-
-    protected function migrateNutritionTable(): void
-    {
-        Capsule::schema()->create('nutrition', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('calories');
-            $table->integer('carbohydrates');
-            $table->date('date');
-            $table->integer('fat');
-            $table->string('name');
-            $table->integer('fiber');
-            $table->integer('protein');
-            $table->unsignedInteger('user_id');
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users');
-        });
-    }
-
-    protected function migrateUsersTable(): void
-    {
-        Capsule::schema()->create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->timestamp('signed_up_at');
-            $table->timestamps();
-        });
     }
 }
