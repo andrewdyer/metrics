@@ -10,6 +10,15 @@ use Cake\Chronos\ChronosInterface;
 
 class CountValue extends Value
 {
+    private $endDate;
+    private $startDate;
+
+    public function __construct(string $startDate, string $endDate)
+    {
+        $this->startDate = Chronos::parse($startDate);
+        $this->endDate = Chronos::parse($endDate);
+    }
+
     public function calculate(): Result
     {
         return $this->count((new User())->newQuery(), null, 'signed_up_at');
@@ -22,7 +31,7 @@ class CountValue extends Value
 
     public function getEndDate(): ChronosInterface
     {
-        return Chronos::parse('2020-05-31 23:59:00');
+        return $this->endDate;
     }
 
     public function getName(): string
@@ -37,6 +46,6 @@ class CountValue extends Value
 
     public function getStartDate(): ChronosInterface
     {
-        return Chronos::parse('2020-05-01 00:00:00');
+        return $this->startDate;
     }
 }

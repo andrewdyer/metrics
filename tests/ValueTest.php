@@ -56,7 +56,7 @@ final class ValueTest extends MetricTest
         User::create(['first_name' => 'Joseph', 'last_name' => 'Ward', 'signed_up_at' => '2020-05-14 11:59:40']);
         User::create(['first_name' => 'Hannah', 'last_name' => 'King', 'signed_up_at' => '2020-05-30 12:31:27']);
 
-        $result = (new CountValue())->calculate();
+        $result = (new CountValue('2020-05-01 00:00:00', '2020-05-31 23:59:00'))->calculate();
 
         $this->assertEquals(3, $result->getValue());
     }
