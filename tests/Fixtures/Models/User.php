@@ -13,4 +13,9 @@ class User extends Model
     {
         return $this->hasMany(Measurement::class)->latest('time_of_measurement');
     }
+
+    public function nutrition(): HasMany
+    {
+        return $this->hasMany(Nutrition::class)->latest('date');
+    }
 }
