@@ -53,7 +53,7 @@ abstract class Value extends Metric
     {
         $column = $column ?? $query->getModel()->getQualifiedKeyName();
 
-        $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
+        $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
 
         $value = with(clone $query)
             ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
