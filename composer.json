@@ -20,9 +20,10 @@
     }
   },
   "require": {
+    "ext-json": "*",
+    "andrewdyer/date-expression": "dev-main",
     "cakephp/chronos": "^2.3",
-    "illuminate/database": "^8.76",
-    "ext-json": "*"
+    "illuminate/database": "^8.76"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",

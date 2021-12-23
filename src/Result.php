@@ -6,7 +6,23 @@ use JsonSerializable;
 
 class Result implements JsonSerializable
 {
-    private $value;
+    /**
+     * @var array
+     */
+    private $trend = [];
+
+    /**
+     * @var float
+     */
+    private $value = 0;
+
+    /**
+     * Get the trend of data for the metric.
+     */
+    public function getTrend(): array
+    {
+        return $this->trend;
+    }
 
     /**
      * Get the value of the result.
@@ -24,6 +40,16 @@ class Result implements JsonSerializable
         return [
             'value' => $this->getValue(),
         ];
+    }
+
+    /**
+     * Set the trend of data for the metric.
+     */
+    public function setTrend(array $trend): self
+    {
+        $this->trend = $trend;
+
+        return $this;
     }
 
     /**

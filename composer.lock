@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5e6450623f85575649da945dff5d99b",
+    "content-hash": "f9ef07147a6958891c04a6d844e12a02",
     "packages": [
+        {
+            "name": "andrewdyer/date-expression",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andrewdyer/date-expression.git",
+                "reference": "80a38d7004a41c3bb1d78013d2e5a283e5a240b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andrewdyer/date-expression/zipball/80a38d7004a41c3bb1d78013d2e5a283e5a240b9",
+                "reference": "80a38d7004a41c3bb1d78013d2e5a283e5a240b9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.76"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/var-dumper": "^5.4"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Anddye\\DateExpression\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Dyer",
+                    "email": "andrewdyer@outlook.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/andrewdyer/date-expression/issues",
+                "source": "https://github.com/andrewdyer/date-expression/tree/main"
+            },
+            "time": "2021-12-15T15:54:41+00:00"
+        },
         {
             "name": "cakephp/chronos",
             "version": "2.3.0",
@@ -3864,7 +3908,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "andrewdyer/date-expression": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
