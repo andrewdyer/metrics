@@ -39,11 +39,6 @@ class CountValue extends Value
         return 'User Growth';
     }
 
-    public function getPrecision(): int
-    {
-        return 0;
-    }
-
     public function getStartDate(): ChronosInterface
     {
         return $this->startDate;

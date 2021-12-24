@@ -27,14 +27,14 @@ interface MetricInterface
     public function getName(): string;
 
     /**
-     * Get the number of decimal digits used when rounding the value.
-     */
-    public function getPrecision(): int;
-
-    /**
      * Get the rounding mode for the metric.
      */
     public function getRoundingMode(): int;
+
+    /**
+     * Get the number of decimal digits used when rounding the value.
+     */
+    public function getRoundingPrecision(): int;
 
     /**
      * Get the start date used when calculating the value of the metric.

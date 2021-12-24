@@ -30,11 +30,6 @@ class SumValue extends Value
         return 'Total Calories for Lunch';
     }
 
-    public function getPrecision(): int
-    {
-        return 0;
-    }
-
     public function getStartDate(): ChronosInterface
     {
         return Chronos::parse('2020-11-26 00:00:00');

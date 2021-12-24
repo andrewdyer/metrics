@@ -30,11 +30,6 @@ class MinValue extends Value
         return 'Minimum Weight (kg) for 2021';
     }
 
-    public function getPrecision(): int
-    {
-        return 0;
-    }
-
     public function getStartDate(): ChronosInterface
     {
         return Chronos::parse('2021-01-01 00:00:00');

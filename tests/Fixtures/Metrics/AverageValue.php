@@ -30,11 +30,6 @@ class AverageValue extends Value
         return 'Average Weight (kg) for May 2020';
     }
 
-    public function getPrecision(): int
-    {
-        return 0;
-    }
-
     public function getStartDate(): ChronosInterface
     {
         return Chronos::parse('2020-05-01 00:00:00');

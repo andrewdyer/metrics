@@ -15,6 +15,14 @@ abstract class Metric implements JsonSerializable, MetricInterface
     }
 
     /**
+     * Get the number of decimal digits used when rounding the value.
+     */
+    public function getRoundingPrecision(): int
+    {
+        return 0;
+    }
+
+    /**
      * Prepare the metric for JSON serialization.
      */
     public function jsonSerialize(): array

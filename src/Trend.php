@@ -72,7 +72,7 @@ abstract class Trend extends Metric implements TrendInterface
             ->get();
 
         return $this->getResult(array_merge($this->generateDatesAccordingToFrequency(), $results->mapWithKeys(function ($result) {
-            return [$this->formatAggregateDateAccordingToFrequency($result->date) => round($result->aggregate, $this->getPrecision(), $this->getRoundingMode())];
+            return [$this->formatAggregateDateAccordingToFrequency($result->date) => round($result->aggregate, $this->getRoundingPrecision(), $this->getRoundingMode())];
         })->all()));
     }
 

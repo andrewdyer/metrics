@@ -35,11 +35,6 @@ class CountTrend extends Trend
         return '';
     }
 
-    public function getPrecision(): int
-    {
-        return 0;
-    }
-
     public function getStartDate(): ChronosInterface
     {
         return Chronos::parse('2020-03-01 00:00:00');
