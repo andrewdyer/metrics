@@ -7,6 +7,14 @@ use JsonSerializable;
 abstract class Metric implements JsonSerializable, MetricInterface
 {
     /**
+     * Get the rounding mode for the metric.
+     */
+    public function getRoundingMode(): int
+    {
+        return PHP_ROUND_HALF_UP;
+    }
+
+    /**
      * Prepare the metric for JSON serialization.
      */
     public function jsonSerialize(): array

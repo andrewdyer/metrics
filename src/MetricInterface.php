@@ -32,6 +32,11 @@ interface MetricInterface
     public function getPrecision(): int;
 
     /**
+     * Get the rounding mode for the metric.
+     */
+    public function getRoundingMode(): int;
+
+    /**
      * Get the start date used when calculating the value of the metric.
      */
     public function getStartDate(): ChronosInterface;

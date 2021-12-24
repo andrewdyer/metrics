@@ -59,7 +59,7 @@ abstract class Value extends Metric
             ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
             ->{$function}($column);
 
-        return $this->getResult(round($value, $this->getPrecision()));
+        return $this->getResult(round($value, $this->getPrecision(), $this->getRoundingMode()));
     }
 
     /**
