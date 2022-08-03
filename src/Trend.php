@@ -166,6 +166,6 @@ abstract class Trend extends Metric implements TrendInterface
      */
     private function getResult(array $result): Result
     {
-        return (new Result())->setTrend($result);
+        return new TrendResult($result);
     }
 }

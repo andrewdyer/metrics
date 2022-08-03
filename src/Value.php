@@ -67,6 +67,6 @@ abstract class Value extends Metric
      */
     private function getResult(float $value): Result
     {
-        return (new Result())->setValue($value);
+        return new ValueResult($value);
     }
 }
