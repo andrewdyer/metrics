@@ -17,6 +17,11 @@ class TrendResult extends Result
         $this->trend = $trend;
     }
 
+    public function getResult()
+    {
+        // TODO: Implement getResult() method.
+    }
+
     /**
      * Get the value of the result.
      */
@@ -31,7 +36,7 @@ class TrendResult extends Result
     public function jsonSerialize(): array
     {
         return [
-            'trend' => $this->trend
+            'trend' => $this->trend,
         ];
     }
 }

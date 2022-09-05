@@ -17,9 +17,16 @@ class ValueResult extends Result
         $this->value = $value;
     }
 
+    public function getResult()
+    {
+        // TODO: Implement getResult() method.
+    }
+
     /**
      * Get the value of the result.
-     */
+     */ /**
+ * Prepare the metric result for JSON serialization.
+ */
     public function getValue(): float
     {
         return $this->value;
@@ -31,7 +38,7 @@ class ValueResult extends Result
     public function jsonSerialize(): array
     {
         return [
-            'value' => $this->value
+            'value' => $this->value,
         ];
     }
 }
