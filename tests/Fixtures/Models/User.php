@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model
 {
-    protected $fillable = ['first_name', 'last_name', 'signed_up_at'];
+    protected $fillable = ['first_name', 'last_name', 'signed_up_at', 'stripe_plan'];
 
     public function measurements(): HasMany
     {

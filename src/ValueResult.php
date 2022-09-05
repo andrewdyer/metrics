@@ -7,31 +7,21 @@ class ValueResult extends Result
     /**
      * The value of the result.
      */
-    private float $value;
+    private float $result;
 
     /**
      * Create a new value result instance.
      */
-    public function __construct(float $value = 0)
+    public function __construct(float $result = 0)
     {
-        $this->value = $value;
+        $this->result = $result;
     }
 
     /**
      * Get the value of the result.
      */
-    public function getValue(): float
+    public function getResult(): float
     {
-        return $this->value;
-    }
-
-    /**
-     * Prepare the metric result for JSON serialization.
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'value' => $this->value
-        ];
+        return $this->result;
     }
 }

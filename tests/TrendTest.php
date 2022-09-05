@@ -39,12 +39,14 @@ final class TrendTest extends MetricTest
         Measurement::create(['date' => '2020-05-20 07:38:26', 'weight_kg' => 66, 'user_id' => 1]);
         Measurement::create(['date' => '2020-05-25 07:20:49', 'weight_kg' => 64, 'user_id' => 1]);
 
-        $result = (new AverageTrend())->calculate();
+        $metric = new AverageTrend();
 
-        $this->assertIsArray($result->getTrend());
-        $this->assertCount(3, $result->getTrend());
-        $this->assertArrayHasKey('May 2020', $result->getTrend());
-        $this->assertEquals(66, $result->getTrend()['May 2020']);
+        $result = $metric->calculate()->getResult();
+
+        $this->assertIsArray($result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('May 2020', $result);
+        $this->assertEquals(66, $result['May 2020']);
     }
 
     public function testCanCalculateCountTrend(): void
@@ -57,20 +59,22 @@ final class TrendTest extends MetricTest
         User::create(['first_name' => 'Violet', 'last_name' => 'Reed', 'signed_up_at' => '2020-06-11 16:13:33']);
         User::create(['first_name' => 'Amelia', 'last_name' => 'Bell', 'signed_up_at' => '2020-07-22 20:21:40']);
 
-        $result = (new CountTrend())->calculate();
+        $metric = new CountTrend();
 
-        $this->assertIsArray($result->getTrend());
-        $this->assertCount(5, $result->getTrend());
-        $this->assertArrayHasKey('March 2020', $result->getTrend());
-        $this->assertArrayHasKey('April 2020', $result->getTrend());
-        $this->assertArrayHasKey('May 2020', $result->getTrend());
-        $this->assertArrayHasKey('June 2020', $result->getTrend());
-        $this->assertArrayHasKey('July 2020', $result->getTrend());
-        $this->assertEquals(1, $result->getTrend()['March 2020']);
-        $this->assertEquals(0, $result->getTrend()['April 2020']);
-        $this->assertEquals(3, $result->getTrend()['May 2020']);
-        $this->assertEquals(2, $result->getTrend()['June 2020']);
-        $this->assertEquals(1, $result->getTrend()['July 2020']);
+        $result = $metric->calculate()->getResult();
+
+        $this->assertIsArray($result);
+        $this->assertCount(5, $result);
+        $this->assertArrayHasKey('March 2020', $result);
+        $this->assertArrayHasKey('April 2020', $result);
+        $this->assertArrayHasKey('May 2020', $result);
+        $this->assertArrayHasKey('June 2020', $result);
+        $this->assertArrayHasKey('July 2020', $result);
+        $this->assertEquals(1, $result['March 2020']);
+        $this->assertEquals(0, $result['April 2020']);
+        $this->assertEquals(3, $result['May 2020']);
+        $this->assertEquals(2, $result['June 2020']);
+        $this->assertEquals(1, $result['July 2020']);
     }
 
     public function testCanCalculateMaxTrend(): void
@@ -83,16 +87,18 @@ final class TrendTest extends MetricTest
         Measurement::create(['date' => '2020-05-25 07:20:49', 'weight_kg' => 64, 'user_id' => 1]);
         Measurement::create(['date' => '2020-06-01 08:01:09', 'weight_kg' => 63, 'user_id' => 1]);
 
-        $result = (new MaxTrend())->calculate();
+        $metric = new MaxTrend();
 
-        $this->assertIsArray($result->getTrend());
-        $this->assertCount(3, $result->getTrend());
-        $this->assertArrayHasKey('April 2020', $result->getTrend());
-        $this->assertArrayHasKey('May 2020', $result->getTrend());
-        $this->assertArrayHasKey('June 2020', $result->getTrend());
-        $this->assertEquals(69, $result->getTrend()['April 2020']);
-        $this->assertEquals(68, $result->getTrend()['May 2020']);
-        $this->assertEquals(63, $result->getTrend()['June 2020']);
+        $result = $metric->calculate()->getResult();
+
+        $this->assertIsArray($result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('April 2020', $result);
+        $this->assertArrayHasKey('May 2020', $result);
+        $this->assertArrayHasKey('June 2020', $result);
+        $this->assertEquals(69, $result['April 2020']);
+        $this->assertEquals(68, $result['May 2020']);
+        $this->assertEquals(63, $result['June 2020']);
     }
 
     public function testCanCalculateMinTrend(): void
@@ -105,16 +111,18 @@ final class TrendTest extends MetricTest
         Measurement::create(['date' => '2020-05-25 07:20:49', 'weight_kg' => 64, 'user_id' => 1]);
         Measurement::create(['date' => '2020-06-01 08:01:09', 'weight_kg' => 63, 'user_id' => 1]);
 
-        $result = (new MinTrend())->calculate();
+        $metric = new MinTrend();
 
-        $this->assertIsArray($result->getTrend());
-        $this->assertCount(3, $result->getTrend());
-        $this->assertArrayHasKey('April 2020', $result->getTrend());
-        $this->assertArrayHasKey('May 2020', $result->getTrend());
-        $this->assertArrayHasKey('June 2020', $result->getTrend());
-        $this->assertEquals(69, $result->getTrend()['April 2020']);
-        $this->assertEquals(64, $result->getTrend()['May 2020']);
-        $this->assertEquals(63, $result->getTrend()['June 2020']);
+        $result = $metric->calculate()->getResult();
+
+        $this->assertIsArray($result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('April 2020', $result);
+        $this->assertArrayHasKey('May 2020', $result);
+        $this->assertArrayHasKey('June 2020', $result);
+        $this->assertEquals(69, $result['April 2020']);
+        $this->assertEquals(64, $result['May 2020']);
+        $this->assertEquals(63, $result['June 2020']);
     }
 
     public function testCanCalculateSumTrend(): void
@@ -127,14 +135,17 @@ final class TrendTest extends MetricTest
         Measurement::create(['date' => '2020-05-25 07:20:49', 'weight_kg' => 64, 'user_id' => 1]);
         Measurement::create(['date' => '2020-06-01 08:01:09', 'weight_kg' => 63, 'user_id' => 1]);
 
-        $result = (new SumTrend())->calculate();
-        $this->assertIsArray($result->getTrend());
-        $this->assertCount(3, $result->getTrend());
-        $this->assertArrayHasKey('April 2020', $result->getTrend());
-        $this->assertArrayHasKey('May 2020', $result->getTrend());
-        $this->assertArrayHasKey('June 2020', $result->getTrend());
-        $this->assertEquals(69, $result->getTrend()['April 2020']);
-        $this->assertEquals(264, $result->getTrend()['May 2020']);
-        $this->assertEquals(63, $result->getTrend()['June 2020']);
+        $metric = new SumTrend();
+
+        $result = $metric->calculate()->getResult();
+
+        $this->assertIsArray($result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('April 2020', $result);
+        $this->assertArrayHasKey('May 2020', $result);
+        $this->assertArrayHasKey('June 2020', $result);
+        $this->assertEquals(69, $result['April 2020']);
+        $this->assertEquals(264, $result['May 2020']);
+        $this->assertEquals(63, $result['June 2020']);
     }
 }

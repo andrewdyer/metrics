@@ -9,7 +9,7 @@ abstract class Value extends Metric
     /**
      * Returns an average aggregate between two dates.
      */
-    public function average(Builder $query, string $column, string $dateColumn = null): Result
+    public function average(Builder $query, string $column, string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'avg', $column, $dateColumn);
     }
@@ -17,7 +17,7 @@ abstract class Value extends Metric
     /**
      * Returns a count aggregate between two dates.
      */
-    public function count(Builder $query, ?string $column = null, ?string $dateColumn = null): Result
+    public function count(Builder $query, ?string $column = null, ?string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'count', $column, $dateColumn);
     }
@@ -25,7 +25,7 @@ abstract class Value extends Metric
     /**
      * Returns a maximum aggregate between two dates.
      */
-    public function max(Builder $query, string $column, ?string $dateColumn = null): Result
+    public function max(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'max', $column, $dateColumn);
     }
@@ -33,7 +33,7 @@ abstract class Value extends Metric
     /**
      * Returns a minimum aggregate between two dates.
      */
-    public function min(Builder $query, string $column, ?string $dateColumn = null): Result
+    public function min(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'min', $column, $dateColumn);
     }
@@ -41,7 +41,7 @@ abstract class Value extends Metric
     /**
      * Returns a sum aggregate between two dates.
      */
-    public function sum(Builder $query, string $column, ?string $dateColumn = null): Result
+    public function sum(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'sum', $column, $dateColumn);
     }
@@ -49,7 +49,7 @@ abstract class Value extends Metric
     /**
      * Returns a result showing the growth of a model between two dates.
      */
-    private function aggregate(Builder $query, string $function, ?string $column = null, ?string $dateColumn = null): Result
+    private function aggregate(Builder $query, string $function, ?string $column = null, ?string $dateColumn = null): ValueResult
     {
         $column = $column ?? $query->getModel()->getQualifiedKeyName();
 
@@ -63,9 +63,9 @@ abstract class Value extends Metric
     }
 
     /**
-     * Returns a new metric result.
+     * Returns a new value result.
      */
-    private function getResult(float $value): Result
+    private function getResult(float $value): ValueResult
     {
         return new ValueResult($value);
     }

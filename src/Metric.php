@@ -2,10 +2,31 @@
 
 namespace Anddye\Metrics;
 
+use Cake\Chronos\ChronosInterface;
 use JsonSerializable;
 
-abstract class Metric implements JsonSerializable, MetricInterface
+abstract class Metric implements JsonSerializable
 {
+    /**
+     * Calculate the value of the metric.
+     */
+    abstract public function calculate(): Result;
+
+    /**
+     * Get the description of the metric.
+     */
+    abstract public function getDescription(): string;
+
+    /**
+     * Get the end date used when calculating the value of the metric.
+     */
+    abstract public function getEndDate(): ChronosInterface;
+
+    /**
+     * Get the name of the metric.
+     */
+    abstract public function getName(): string;
+
     /**
      * Get the rounding mode for the metric.
      */
@@ -21,6 +42,11 @@ abstract class Metric implements JsonSerializable, MetricInterface
     {
         return 0;
     }
+
+    /**
+     * Get the start date used when calculating the value of the metric.
+     */
+    abstract public function getStartDate(): ChronosInterface;
 
     /**
      * Prepare the metric for JSON serialization.

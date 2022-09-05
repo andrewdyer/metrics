@@ -2,7 +2,7 @@
 
 namespace Anddye\Metrics;
 
-class TrendResult extends Result
+class PartitionResult extends Result
 {
     /**
      * The value of the result.
@@ -10,7 +10,7 @@ class TrendResult extends Result
     private array $result;
 
     /**
-     * Create a new trend result instance.
+     * Create a new partition result instance.
      */
     public function __construct(array $result = [])
     {
