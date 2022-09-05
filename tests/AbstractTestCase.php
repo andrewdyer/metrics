@@ -5,7 +5,7 @@ namespace Anddye\Metrics\Tests;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use PHPUnit\Framework\TestCase;
 
-abstract class MetricTest extends TestCase
+abstract class AbstractTestCase extends TestCase
 {
     protected function setUp(): void
     {

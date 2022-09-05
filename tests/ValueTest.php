@@ -14,7 +14,7 @@ use Anddye\Metrics\Tests\Traits\Measurements;
 use Anddye\Metrics\Tests\Traits\Nutritions;
 use Anddye\Metrics\Tests\Traits\Users;
 
-final class ValueTest extends MetricTest
+final class ValueTest extends AbstractTestCase
 {
     use Measurements;
     use Nutritions;

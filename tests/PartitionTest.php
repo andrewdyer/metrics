@@ -6,7 +6,7 @@ use Anddye\Metrics\Tests\Fixtures\Metrics\UsersPerPlanPartition;
 use Anddye\Metrics\Tests\Fixtures\Models\User;
 use Anddye\Metrics\Tests\Traits\Users;
 
-final class PartitionTest extends MetricTest
+final class PartitionTest extends AbstractTestCase
 {
     use Users;
 

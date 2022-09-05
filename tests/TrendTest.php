@@ -12,7 +12,7 @@ use Anddye\Metrics\Tests\Fixtures\Models\User;
 use Anddye\Metrics\Tests\Traits\Measurements;
 use Anddye\Metrics\Tests\Traits\Users;
 
-final class TrendTest extends MetricTest
+final class TrendTest extends AbstractTestCase
 {
     use Measurements;
     use Users;
