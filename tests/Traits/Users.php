@@ -19,6 +19,7 @@ trait Users
             $table->string('first_name');
             $table->string('last_name');
             $table->timestamp('signed_up_at');
+            $table->enum('stripe_plan', ['none', 'daily', 'monthly', 'yearly'])->default('none');
             $table->timestamps();
         });
     }
