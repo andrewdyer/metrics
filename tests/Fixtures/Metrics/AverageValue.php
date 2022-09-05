@@ -17,7 +17,7 @@ class AverageValue extends Value
 
     public function getDescription(): string
     {
-        return '';
+        return 'Metric to calculate average user weight (kg).';
     }
 
     public function getEndDate(): ChronosInterface

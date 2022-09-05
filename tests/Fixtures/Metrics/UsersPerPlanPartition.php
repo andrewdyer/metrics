@@ -15,11 +15,6 @@ class UsersPerPlanPartition extends Partition
         return $this->count((new User())->newQuery(), 'stripe_plan');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return Chronos::parse('2020-12-31');

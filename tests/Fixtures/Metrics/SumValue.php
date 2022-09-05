@@ -15,11 +15,6 @@ class SumValue extends Value
         return $this->sum((new Nutrition())->newQuery(), 'calories', 'date');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return Chronos::parse('2020-11-26 23:59:00');

@@ -15,11 +15,6 @@ class MinValue extends Value
         return $this->min((new Measurement())->newQuery(), 'weight_kg', 'date');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return Chronos::parse('2021-12-31 23:59:00');

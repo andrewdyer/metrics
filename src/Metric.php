@@ -15,7 +15,10 @@ abstract class Metric implements JsonSerializable
     /**
      * Get the description of the metric.
      */
-    abstract public function getDescription(): string;
+    public function getDescription(): string
+    {
+        return '';
+    }
 
     /**
      * Get the end date used when calculating the value of the metric.

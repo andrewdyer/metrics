@@ -24,11 +24,6 @@ class CountValue extends Value
         return $this->count((new User())->newQuery(), null, 'signed_up_at');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return $this->endDate;

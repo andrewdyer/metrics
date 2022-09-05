@@ -15,11 +15,6 @@ class CountTrend extends Trend
         return $this->count((new User())->newQuery(), null, 'signed_up_at');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return Chronos::parse('2020-07-31 23:59:00');

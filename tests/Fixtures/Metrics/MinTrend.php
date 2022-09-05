@@ -15,11 +15,6 @@ class MinTrend extends Trend
         return $this->min((new Measurement())->newQuery(), 'weight_kg', 'date');
     }
 
-    public function getDescription(): string
-    {
-        return '';
-    }
-
     public function getEndDate(): ChronosInterface
     {
         return Chronos::parse('2020-06-30 23:59:00');
