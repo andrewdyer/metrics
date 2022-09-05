@@ -10,7 +10,7 @@ class PartitionResult extends Result
     private array $result;
 
     /**
-     * Create a new value result instance.
+     * Create a new partition result instance.
      */
     public function __construct(array $result = [])
     {

@@ -7,36 +7,21 @@ class TrendResult extends Result
     /**
      * The value of the result.
      */
-    private array $trend;
+    private array $result;
 
     /**
-     * Create a new value result instance.
+     * Create a new trend result instance.
      */
-    public function __construct(array $trend = [])
+    public function __construct(array $result = [])
     {
-        $this->trend = $trend;
-    }
-
-    public function getResult()
-    {
-        // TODO: Implement getResult() method.
+        $this->result = $result;
     }
 
     /**
      * Get the value of the result.
      */
-    public function getTrend(): array
+    public function getResult(): array
     {
-        return $this->trend;
-    }
-
-    /**
-     * Prepare the metric result for JSON serialization.
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'trend' => $this->trend,
-        ];
+        return $this->result;
     }
 }
