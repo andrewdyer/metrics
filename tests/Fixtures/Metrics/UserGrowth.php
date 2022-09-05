@@ -8,7 +8,7 @@ use Anddye\Metrics\Value;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;
 
-class CountValue extends Value
+class UserGrowth extends Value
 {
     private $endDate;
     private $startDate;
@@ -27,11 +27,6 @@ class CountValue extends Value
     public function getEndDate(): ChronosInterface
     {
         return $this->endDate;
-    }
-
-    public function getName(): string
-    {
-        return 'User Growth';
     }
 
     public function getStartDate(): ChronosInterface

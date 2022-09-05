@@ -3,10 +3,10 @@
 namespace Anddye\Metrics\Tests;
 
 use Anddye\Metrics\Tests\Fixtures\Metrics\AverageValue;
-use Anddye\Metrics\Tests\Fixtures\Metrics\CountValue;
 use Anddye\Metrics\Tests\Fixtures\Metrics\MaxValue;
 use Anddye\Metrics\Tests\Fixtures\Metrics\MinValue;
 use Anddye\Metrics\Tests\Fixtures\Metrics\SumValue;
+use Anddye\Metrics\Tests\Fixtures\Metrics\UserGrowth;
 use Anddye\Metrics\Tests\Fixtures\Models\Measurement;
 use Anddye\Metrics\Tests\Fixtures\Models\Nutrition;
 use Anddye\Metrics\Tests\Fixtures\Models\User;
@@ -58,7 +58,7 @@ final class ValueTest extends AbstractTestCase
         User::create(['first_name' => 'Joseph', 'last_name' => 'Ward', 'signed_up_at' => '2020-05-14 11:59:40']);
         User::create(['first_name' => 'Hannah', 'last_name' => 'King', 'signed_up_at' => '2020-05-30 12:31:27']);
 
-        $metric = new CountValue('2020-05-01 00:00:00', '2020-05-31 23:59:00');
+        $metric = new UserGrowth('2020-05-01 00:00:00', '2020-05-31 23:59:00');
 
         $result = $metric->calculate()->getResult();
 

@@ -4,6 +4,7 @@ namespace Anddye\Metrics;
 
 use Cake\Chronos\ChronosInterface;
 use JsonSerializable;
+use ReflectionClass;
 
 abstract class Metric implements JsonSerializable
 {
@@ -28,7 +29,10 @@ abstract class Metric implements JsonSerializable
     /**
      * Get the name of the metric.
      */
-    abstract public function getName(): string;
+    public function getName(): string
+    {
+        return (new ReflectionClass($this))->getShortName();
+    }
 
     /**
      * Get the rounding mode for the metric.
