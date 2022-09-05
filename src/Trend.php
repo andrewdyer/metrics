@@ -9,7 +9,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 
-abstract class Trend extends Metric implements TrendInterface
+abstract class Trend extends Metric
 {
     /**
      * Returns an average aggregate between two dates.
@@ -26,6 +26,11 @@ abstract class Trend extends Metric implements TrendInterface
     {
         return $this->aggregate($query, 'count', $column, $dateColumn);
     }
+
+    /**
+     * Get the frequency of the metric.
+     */
+    abstract public function getFrequency(): string;
 
     /**
      * Returns a maximum aggregate between two dates.
