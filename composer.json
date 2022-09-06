@@ -21,7 +21,7 @@
   },
   "require": {
     "ext-json": "*",
-    "andrewdyer/date-expression": "dev-main",
+    "andrewdyer/date-expression": "^1.0",
     "cakephp/chronos": "^2.3",
     "illuminate/database": "^8.76"
   },
