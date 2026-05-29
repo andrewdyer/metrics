@@ -18,6 +18,13 @@ use InvalidArgumentException;
 final class DateExpressionFactory
 {
     /**
+     * Prevents instantiation of this utility class.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
      * Creates a date expression appropriate for the given query's database driver.
      *
      * @param Builder $query The Eloquent query builder instance.
