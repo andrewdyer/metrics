@@ -109,4 +109,17 @@ final class PartitionTest extends AbstractTestCase
         $this->assertArrayHasKey('US', $data);
         $this->assertArrayHasKey('DE', $data);
     }
+
+    /**
+     * Asserts that getName returns the short class name of the metric.
+     */
+    public function testGetNameReturnsShortClassName(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $this->assertSame('TestPartitionMetric', $metric->getName());
+    }
 }
