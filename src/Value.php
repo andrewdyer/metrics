@@ -2,6 +2,7 @@
 
 namespace Anddye\Metrics;
 
+use Anddye\Metrics\Results\ValueResult;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class Value extends Metric

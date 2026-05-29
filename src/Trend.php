@@ -3,6 +3,7 @@
 namespace Anddye\Metrics;
 
 use Anddye\DateExpression\DateExpressionFactory;
+use Anddye\Metrics\Results\TrendResult;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;
 use Illuminate\Database\Capsule\Manager as DB;

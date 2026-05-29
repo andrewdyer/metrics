@@ -1,6 +1,6 @@
 <?php
 
-namespace Anddye\Metrics;
+namespace Anddye\Metrics\Results;
 
 use JsonSerializable;
 

@@ -3,7 +3,7 @@
 namespace Anddye\Metrics\Tests\Fixtures\Metrics;
 
 use Anddye\Metrics\Partition;
-use Anddye\Metrics\Result;
+use Anddye\Metrics\Results\Result;
 use Anddye\Metrics\Tests\Fixtures\Models\User;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;

@@ -2,6 +2,7 @@
 
 namespace Anddye\Metrics;
 
+use Anddye\Metrics\Results\Result;
 use Cake\Chronos\ChronosInterface;
 use JsonSerializable;
 use ReflectionClass;

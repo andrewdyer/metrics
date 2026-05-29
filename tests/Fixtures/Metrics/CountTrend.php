@@ -2,7 +2,7 @@
 
 namespace Anddye\Metrics\Tests\Fixtures\Metrics;
 
-use Anddye\Metrics\Result;
+use Anddye\Metrics\Results\Result;
 use Anddye\Metrics\Tests\Fixtures\Models\User;
 use Anddye\Metrics\Trend;
 use Cake\Chronos\Chronos;

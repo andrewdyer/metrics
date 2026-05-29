@@ -2,6 +2,7 @@
 
 namespace Anddye\Metrics;
 
+use Anddye\Metrics\Results\PartitionResult;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 
