@@ -130,4 +130,48 @@ final class ValueTest extends AbstractTestCase
 
         $this->assertSame(116.67, $result->getResult());
     }
+
+    /**
+     * Asserts that count returns zero when no records exist within the date range.
+     */
+    public function testCountReturnsZeroWhenNoRecordsExist(): void
+    {
+        $metric = new TestValueMetric(
+            new DateTimeImmutable('2020-01-01'),
+            new DateTimeImmutable('2020-12-31'),
+        );
+
+        $result = $metric->count(Order::query());
+
+        $this->assertSame(0, $result->getResult());
+    }
+
+    /**
+     * Asserts that getName returns the short class name of the metric.
+     */
+    public function testGetNameReturnsShortClassName(): void
+    {
+        $metric = new TestValueMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $this->assertSame('TestValueMetric', $metric->getName());
+    }
+
+    /**
+     * Asserts that jsonSerialize formats the start and end dates as strings.
+     */
+    public function testJsonSerializeDateFormattedAsString(): void
+    {
+        $metric = new TestValueMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $json = $metric->jsonSerialize();
+
+        $this->assertSame('2026-01-01', $json['dates']['start']);
+        $this->assertSame('2026-12-31', $json['dates']['end']);
+    }
 }
