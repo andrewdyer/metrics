@@ -93,8 +93,12 @@ abstract class Value extends Metric implements HasDateRange
         $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
 
         $value = (clone $query)
-                    ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
+            ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
             ->{$function}($column);
+
+        if ($value === null) {
+            return new ValueResult(0);
+        }
 
         $rounded = round((float)$value, $this->getRoundingPrecision(), $this->getRoundingMode());
 
