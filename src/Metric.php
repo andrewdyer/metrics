@@ -1,20 +1,38 @@
 <?php
 
-namespace Anddye\Metrics;
+declare(strict_types=1);
 
-use Cake\Chronos\ChronosInterface;
+namespace AndrewDyer\Metrics;
+
+use AndrewDyer\Metrics\Results\Result;
 use JsonSerializable;
-use ReflectionClass;
 
+/**
+ * Handles the base behaviour and serialization for all metric types.
+ */
 abstract class Metric implements JsonSerializable
 {
     /**
-     * Calculate the value of the metric.
+     * Calculates and returns the metric result.
+     *
+     * @return Result The computed result.
      */
     abstract public function calculate(): Result;
 
     /**
-     * Get the description of the metric.
+     * Returns the short class name of the metric.
+     *
+     * @return string The metric name.
+     */
+    public function getName(): string
+    {
+        return substr(strrchr(static::class, '\\'), 1);
+    }
+
+    /**
+     * Returns the metric description.
+     *
+     * @return string The description.
      */
     public function getDescription(): string
     {
@@ -22,28 +40,9 @@ abstract class Metric implements JsonSerializable
     }
 
     /**
-     * Get the end date used when calculating the value of the metric.
-     */
-    abstract public function getEndDate(): ChronosInterface;
-
-    /**
-     * Get the name of the metric.
-     */
-    public function getName(): string
-    {
-        return (new ReflectionClass($this))->getShortName();
-    }
-
-    /**
-     * Get the rounding mode for the metric.
-     */
-    public function getRoundingMode(): int
-    {
-        return PHP_ROUND_HALF_UP;
-    }
-
-    /**
-     * Get the number of decimal digits used when rounding the value.
+     * Returns the rounding precision applied to metric values.
+     *
+     * @return int The number of decimal places.
      */
     public function getRoundingPrecision(): int
     {
@@ -51,22 +50,25 @@ abstract class Metric implements JsonSerializable
     }
 
     /**
-     * Get the start date used when calculating the value of the metric.
+     * Returns the PHP rounding mode constant used for calculations.
+     *
+     * @return int The PHP rounding mode constant.
      */
-    abstract public function getStartDate(): ChronosInterface;
+    public function getRoundingMode(): int
+    {
+        return PHP_ROUND_HALF_UP;
+    }
 
     /**
-     * Prepare the metric for JSON serialization.
+     * Returns a JSON-serializable representation of the metric.
+     *
+     * @return array<string, mixed> The serialized metric data.
      */
     public function jsonSerialize(): array
     {
         return [
             'name' => $this->getName(),
             'description' => $this->getDescription(),
-            'dates' => [
-                'start' => $this->getStartDate(),
-                'end' => $this->getEndDate(),
-            ],
         ];
     }
 }
