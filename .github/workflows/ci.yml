@@ -9,6 +9,30 @@ on:
       - main
 
 jobs:
-  php-test:
-    name: PHP test
-    uses: andrewdyer/github-workflows/.github/workflows/php-test.yml@main
+  test:
+    name: PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ["8.3", "8.4"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check SQLite version
+        run: sqlite3 --version
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo, pdo_sqlite, sqlite3
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit
