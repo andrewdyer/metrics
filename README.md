@@ -241,12 +241,12 @@ public function getRoundingMode(): int
 
 The following database drivers are supported:
 
-| Driver     | Status      |
-| ---------- | ----------- |
-| MySQL      | ✓ Supported |
-| MariaDB    | ✓ Supported |
-| SQLite     | ✓ Supported |
-| PostgreSQL | ✓ Supported |
+| Driver     | Minimum Version |
+| ---------- | --------------- |
+| MySQL      | 5.7+            |
+| MariaDB    | 10.2+           |
+| SQLite     | 3.38.0+         |
+| PostgreSQL | 9.4+            |
 
 ## License
 

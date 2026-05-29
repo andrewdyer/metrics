@@ -33,7 +33,7 @@ final readonly class SqliteDateExpression implements DateExpression
     {
         return match ($this->frequency) {
             Frequency::Daily => "strftime('%Y-%m-%d', {$this->column})",
-            Frequency::Weekly => "strftime('%Y-', {$this->column}) || printf('%02d', strftime('%W', {$this->column}))",
+            Frequency::Weekly => "strftime('%G-%V', {$this->column})",
             Frequency::Monthly => "strftime('%Y-%m', {$this->column})",
         };
     }
