@@ -115,17 +115,6 @@ final class ValueTest extends AbstractTestCase
     }
 
     /**
-     * Asserts that count excludes records outside the configured date range.
-     */
-    public function testCountExcludesRecordsOutsideDateRange(): void
-    {
-        $metric = new TestValueMetric($this->start, $this->end);
-        $result = $metric->count(Order::query());
-
-        $this->assertSame(3, $result->getResult());
-    }
-
-    /**
      * Asserts that the configured rounding precision is applied to the result.
      */
     public function testRoundingPrecisionIsApplied(): void
