@@ -164,4 +164,35 @@ final class TrendTest extends AbstractTestCase
 
         $this->assertCount(3, $data);
     }
+
+    /**
+     * Asserts that getName returns the short class name of the metric.
+     */
+    public function testGetNameReturnsShortClassName(): void
+    {
+        $metric = new TestTrendMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $this->assertSame('TestTrendMetric', $metric->getName());
+    }
+
+    /**
+     * Asserts that jsonSerialize formats the start and end dates as strings.
+     */
+    public function testJsonSerializeDateFormattedAsString(): void
+    {
+        $metric = new TestTrendMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+            Frequency::Monthly,
+        );
+
+        $json = $metric->jsonSerialize();
+
+        $this->assertSame('2026-01-01', $json['dates']['start']);
+        $this->assertSame('2026-12-31', $json['dates']['end']);
+        $this->assertSame(Frequency::Monthly, $json['frequency']);
+    }
 }
