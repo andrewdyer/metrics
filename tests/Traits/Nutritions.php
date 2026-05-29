@@ -14,7 +14,7 @@ trait Nutritions
 
     protected function migrateNutritionTable(): void
     {
-        Capsule::schema()->create('nutrition', function (Blueprint $table) {
+        Capsule::schema()->create('nutrition', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('calories');
             $table->integer('carbohydrates');

@@ -14,7 +14,7 @@ trait Measurements
 
     protected function migrateMeasurementsTable(): void
     {
-        Capsule::schema()->create('measurements', function (Blueprint $table) {
+        Capsule::schema()->create('measurements', function(Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date');
             $table->unsignedInteger('user_id');

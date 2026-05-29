@@ -76,7 +76,7 @@ abstract class Trend extends Metric
             ->orderBy('date')
             ->get();
 
-        return $this->getResult(array_merge($this->generateDatesAccordingToFrequency(), $results->mapWithKeys(function ($result) {
+        return $this->getResult(array_merge($this->generateDatesAccordingToFrequency(), $results->mapWithKeys(function($result) {
             return [$this->formatAggregateDateAccordingToFrequency($result->date) => round($result->aggregate, $this->getRoundingPrecision(), $this->getRoundingMode())];
         })->all()));
     }
@@ -95,13 +95,13 @@ abstract class Trend extends Metric
 
                 return $this->formatDateAccordingToFrequency((
                     new Chronos())
-                        ->setISODate((int) $year, (int) $week)
+                        ->setISODate((int)$year, (int)$week)
                         ->setTime(0, 0));
 
             case 'monthly':
                 [$year, $month] = explode('-', $date);
 
-                return $this->formatDateAccordingToFrequency(Chronos::create((int) $year, (int) $month, 1));
+                return $this->formatDateAccordingToFrequency(Chronos::create((int)$year, (int)$month, 1));
 
             default:
                 throw new InvalidArgumentException('Frequency not supported.');

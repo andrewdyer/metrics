@@ -25,10 +25,11 @@ abstract class Partition extends Metric
         $wrappedColumn = $query->getQuery()->getGrammar()->wrap($column);
 
         $results = $query->select(
-            $groupBy, DB::raw("{$function}({$wrappedColumn}) as aggregate")
+            $groupBy,
+            DB::raw("{$function}({$wrappedColumn}) as aggregate")
         )->groupBy($groupBy)->get();
 
-        return $this->getResult($results->mapWithKeys(function ($result) use ($groupBy) {
+        return $this->getResult($results->mapWithKeys(function($result) use ($groupBy) {
             return $this->formatAggregateResult($result, $groupBy);
         })->all());
     }

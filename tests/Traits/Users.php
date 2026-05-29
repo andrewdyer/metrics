@@ -14,7 +14,7 @@ trait Users
 
     protected function migrateUsersTable(): void
     {
-        Capsule::schema()->create('users', function (Blueprint $table) {
+        Capsule::schema()->create('users', function(Blueprint $table) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');
