@@ -7,7 +7,7 @@ namespace AndrewDyer\Metrics\Results;
 use JsonSerializable;
 
 /**
- * Handles the base behaviour and serialization for all metric results.
+ * Carries the base behaviour and serialization for all metric results.
  */
 abstract class Result implements JsonSerializable
 {
