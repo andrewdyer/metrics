@@ -117,6 +117,10 @@ abstract class Trend extends Metric implements HasDateRange
         $data = array_merge(
             $period->fill(),
             $results->mapWithKeys(function($result) use ($period) {
+                if ($result->date === null) {
+                    return [];
+                }
+
                 return [
                     $period->formatDate($result->date) => round(
                         $result->aggregate,

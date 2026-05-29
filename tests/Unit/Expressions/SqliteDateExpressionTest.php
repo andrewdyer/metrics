@@ -30,7 +30,10 @@ final class SqliteDateExpressionTest extends AbstractTestCase
     {
         $expression = new SqliteDateExpression('created_at', Frequency::Weekly);
 
-        $this->assertSame("strftime('%G-%V', created_at)", $expression->getValue());
+        $this->assertSame(
+            "strftime('%Y-', created_at) || printf('%02d', (strftime('%W', created_at) + (1 - strftime('%W', strftime('%Y', created_at) || '-01-04'))))",
+            $expression->getValue(),
+        );
     }
 
     /**
