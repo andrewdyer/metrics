@@ -74,7 +74,7 @@ abstract class Partition extends Metric
         $segments = explode('.', $groupBy);
         $key = end($segments);
 
-        $data = $results->mapWithKeys(function($result) use ($groupBy, $key) {
+        $data = $results->mapWithKeys(function($result) use ($key) {
             return [$result->{$key} => $result->aggregate];
         })->all();
 
