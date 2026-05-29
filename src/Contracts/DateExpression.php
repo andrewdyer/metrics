@@ -12,14 +12,9 @@ interface DateExpression
     /**
      * Returns the raw SQL date expression string.
      *
-     * @return string The SQL expression.
-     */
-    public function getValue(): string;
-
-    /**
-     * Returns the string representation of the date expression.
+     * Implementations must ensure __toString() returns the same value as getValue().
      *
      * @return string The SQL expression.
      */
-    public function __toString(): string;
+    public function getValue(): string;
 }
