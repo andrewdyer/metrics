@@ -28,4 +28,14 @@ final class DateExpressionFactoryTest extends AbstractTestCase
 
         $this->assertInstanceOf(SqliteDateExpression::class, $expression);
     }
+
+    /**
+     * Asserts that DateExpressionFactory cannot be instantiated.
+     */
+    public function testCannotBeInstantiated(): void
+    {
+        $reflection = new \ReflectionClass(DateExpressionFactory::class);
+
+        $this->assertTrue($reflection->getConstructor()->isPrivate());
+    }
 }
