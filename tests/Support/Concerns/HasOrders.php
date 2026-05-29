@@ -31,6 +31,6 @@ trait HasOrders
      */
     protected function dropOrdersTable(): void
     {
-        Capsule::schema()->drop('orders');
+        Capsule::schema()->dropIfExists('orders');
     }
 }
