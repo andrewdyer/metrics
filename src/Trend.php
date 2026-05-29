@@ -139,8 +139,8 @@ abstract class Trend extends Metric implements HasDateRange
     {
         return array_merge(parent::jsonSerialize(), [
             'dates' => [
-                'start' => $this->getStartDate(),
-                'end' => $this->getEndDate(),
+                'start' => $this->getStartDate()->format('Y-m-d'),
+                'end' => $this->getEndDate()->format('Y-m-d'),
             ],
             'frequency' => $this->getFrequency(),
         ]);
