@@ -12,7 +12,7 @@ use DateTimeImmutable;
 /**
  * Represents a date range period and provides date label generation by frequency.
  */
-final class Period
+final readonly class Period
 {
     /**
      * Creates a new Period.
@@ -22,9 +22,9 @@ final class Period
      * @param Frequency $frequency The aggregation frequency.
      */
     public function __construct(
-        public readonly DateTimeImmutable $start,
-        public readonly DateTimeImmutable $end,
-        public readonly Frequency $frequency,
+        public DateTimeImmutable $start,
+        public DateTimeImmutable $end,
+        public Frequency         $frequency,
     ) {
     }
 
@@ -32,11 +32,12 @@ final class Period
      * Returns an array of date labels mapped to zero for the full period.
      *
      * @return array<string, int> The date labels with default zero values.
+     * @throws DateMalformedStringException
      */
     public function fill(): array
     {
         $dates = [];
-        $current = $this->start;
+        $current = $this->normalise($this->start);
 
         while ($current <= $this->end) {
             $dates[$this->formatDate($current->format($this->rawFormat()))] = 0;
@@ -78,7 +79,22 @@ final class Period
 
         $end = $start->add(new DateInterval('P6D'));
 
-        return $start->format('F j') . ' - ' . $end->format('F j');
+        return $start->format('F j') . ' - ' . $end->format('F j, Y');
+    }
+
+    /**
+     * Returns the normalised start date for the current frequency.
+     *
+     * @param DateTimeImmutable $date The date to normalise.
+     * @return DateTimeImmutable The normalised date.
+     * @throws DateMalformedStringException
+     */
+    private function normalise(DateTimeImmutable $date): DateTimeImmutable
+    {
+        return match ($this->frequency) {
+            Frequency::Monthly => $date->modify('first day of this month')->setTime(0, 0),
+            default => $date,
+        };
     }
 
     /**
@@ -90,7 +106,7 @@ final class Period
     {
         return match ($this->frequency) {
             Frequency::Daily => 'Y-m-d',
-            Frequency::Weekly => 'Y-W',
+            Frequency::Weekly => 'o-W',
             Frequency::Monthly => 'Y-m',
         };
     }

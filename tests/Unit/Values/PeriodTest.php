@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace AndrewDyer\Metrics\Tests\Unit\Values;
 
 use AndrewDyer\Metrics\Enums\Frequency;
-use AndrewDyer\Metrics\Tests\AbstractTestCase;
 use AndrewDyer\Metrics\Values\Period;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for Period.
  */
-final class PeriodTest extends AbstractTestCase
+final class PeriodTest extends TestCase
 {
     /**
      * Asserts that fill generates the correct monthly date labels mapped to zero.
@@ -31,6 +31,25 @@ final class PeriodTest extends AbstractTestCase
         $this->assertArrayHasKey('February 2026', $filled);
         $this->assertArrayHasKey('March 2026', $filled);
         $this->assertSame(0, $filled['January 2026']);
+    }
+
+    /**
+     * Asserts that fill does not skip months when the start date falls on the last day of a month.
+     */
+    public function testFillMonthlyDoesNotSkipMonthsOnLateStartDay(): void
+    {
+        $period = new Period(
+            new DateTimeImmutable('2026-01-31'),
+            new DateTimeImmutable('2026-03-31'),
+            Frequency::Monthly,
+        );
+
+        $filled = $period->fill();
+
+        $this->assertArrayHasKey('January 2026', $filled);
+        $this->assertArrayHasKey('February 2026', $filled);
+        $this->assertArrayHasKey('March 2026', $filled);
+        $this->assertCount(3, $filled);
     }
 
     /**
@@ -102,9 +121,9 @@ final class PeriodTest extends AbstractTestCase
     }
 
     /**
-     * Asserts that formatDate returns a label containing a week range separator.
+     * Asserts that formatDate returns a weekly label containing a year and range separator.
      */
-    public function testFormatDateWeekly(): void
+    public function testFormatDateWeeklyContainsYear(): void
     {
         $period = new Period(
             new DateTimeImmutable('2026-01-01'),
@@ -115,5 +134,22 @@ final class PeriodTest extends AbstractTestCase
         $formatted = $period->formatDate('2026-03');
 
         $this->assertStringContainsString(' - ', $formatted);
+        $this->assertStringContainsString('2026', $formatted);
+    }
+
+    /**
+     * Asserts that weekly labels are unique when the period spans a year boundary.
+     */
+    public function testWeeklyLabelsAreUniqueAcrossYearBoundary(): void
+    {
+        $period = new Period(
+            new DateTimeImmutable('2025-12-22'),
+            new DateTimeImmutable('2026-01-11'),
+            Frequency::Weekly,
+        );
+
+        $filled = $period->fill();
+
+        $this->assertCount(count(array_unique(array_keys($filled))), $filled);
     }
 }
