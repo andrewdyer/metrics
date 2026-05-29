@@ -18,25 +18,21 @@
   },
   "autoload": {
     "psr-4": {
-      "Anddye\\Metrics\\": "src/"
+      "AndrewDyer\\Metrics\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Anddye\\Metrics\\Tests\\": "tests/"
+      "AndrewDyer\\Metrics\\Tests\\": "tests/"
     }
   },
   "require": {
     "php": "^8.3",
-    "ext-json": "*",
-    "andrewdyer/date-expression": "^1.0",
-    "cakephp/chronos": "^2.3",
-    "illuminate/database": "^8.76"
+    "illuminate/database": "^11.0"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.75",
-    "phpunit/phpunit": "^10.5",
-    "symfony/var-dumper": "^5.4"
+    "phpunit/phpunit": "^10.5"
   },
   "scripts": {
     "cs": "php-cs-fixer fix",

@@ -1,55 +1,83 @@
 <?php
 
-namespace Anddye\Metrics;
+declare(strict_types=1);
 
-use Anddye\Metrics\Results\PartitionResult;
-use Illuminate\Database\Capsule\Manager as DB;
+namespace AndrewDyer\Metrics;
+
+use AndrewDyer\Metrics\Results\PartitionResult;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 
+/**
+ * Handles partition metric calculations grouped by a specified column.
+ */
 abstract class Partition extends Metric
 {
     /**
-     * Returns a count aggregate between two dates.
+     * Returns a partition result with record counts grouped by the specified column.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $groupBy The column to group results by.
+     * @param string|null $column The column to count; defaults to the primary key.
+     * @return PartitionResult The partition result.
      */
     public function count(Builder $query, string $groupBy, ?string $column = null): PartitionResult
     {
-        return $this->aggregate($query, 'count', $column, $groupBy);
+        return $this->aggregate($query, 'count', $groupBy, $column);
     }
 
     /**
-     * Returns a partition result showing the segments of an aggregate.
+     * Returns a partition result with summed values grouped by the specified column.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $groupBy The column to group results by.
+     * @param string $column The column to sum.
+     * @return PartitionResult The partition result.
      */
-    private function aggregate(Builder $query, string $function, ?string $column, string $groupBy): PartitionResult
+    public function sum(Builder $query, string $groupBy, string $column): PartitionResult
+    {
+        return $this->aggregate($query, 'sum', $groupBy, $column);
+    }
+
+    /**
+     * Returns a partition result with averaged values grouped by the specified column.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $groupBy The column to group results by.
+     * @param string $column The column to average.
+     * @return PartitionResult The partition result.
+     */
+    public function average(Builder $query, string $groupBy, string $column): PartitionResult
+    {
+        return $this->aggregate($query, 'avg', $groupBy, $column);
+    }
+
+    /**
+     * Processes an aggregate query and returns a partition result.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $function The SQL aggregate function (e.g. count, sum, avg).
+     * @param string $groupBy The column to group results by.
+     * @param string|null $column The column to aggregate; defaults to the primary key.
+     * @return PartitionResult The partition result.
+     */
+    private function aggregate(Builder $query, string $function, string $groupBy, ?string $column = null): PartitionResult
     {
         $column = $column ?? $query->getModel()->getQualifiedKeyName();
-
         $wrappedColumn = $query->getQuery()->getGrammar()->wrap($column);
 
-        $results = $query->select(
-            $groupBy,
-            DB::raw("{$function}({$wrappedColumn}) as aggregate")
-        )->groupBy($groupBy)->get();
+        $results = (clone $query)
+            ->select($groupBy, new Expression("{$function}({$wrappedColumn}) as aggregate"))
+            ->groupBy($groupBy)
+            ->get();
 
-        return $this->getResult($results->mapWithKeys(function($result) use ($groupBy) {
-            return $this->formatAggregateResult($result, $groupBy);
-        })->all());
-    }
+        $segments = explode('.', $groupBy);
+        $key = end($segments);
 
-    /**
-     * Format the aggregate result for the partition.
-     */
-    private function formatAggregateResult($result, string $groupBy): array
-    {
-        $key = $result->{last(explode('.', $groupBy))};
+        $data = $results->mapWithKeys(function($result) use ($groupBy, $key) {
+            return [$result->{$key} => $result->aggregate];
+        })->all();
 
-        return [$key => $result->aggregate];
-    }
-
-    /**
-     * Create a new partition metric result.
-     */
-    private function getResult(array $result): PartitionResult
-    {
-        return new PartitionResult($result);
+        return new PartitionResult($data);
     }
 }

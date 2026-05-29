@@ -1,24 +1,28 @@
 <?php
 
-namespace Anddye\Metrics\Results;
+declare(strict_types=1);
 
-class TrendResult extends Result
+namespace AndrewDyer\Metrics\Results;
+
+/**
+ * Carries the result data for a trend metric.
+ */
+final class TrendResult extends Result
 {
     /**
-     * The value of the result.
+     * Creates a new TrendResult.
+     *
+     * @param array<string, int|float> $result The trend data keyed by date label.
      */
-    private array $result;
-
-    /**
-     * Create a new trend result instance.
-     */
-    public function __construct(array $result = [])
-    {
-        $this->result = $result;
+    public function __construct(
+        private readonly array $result = [],
+    ) {
     }
 
     /**
-     * Get the value of the result.
+     * Returns the trend result data.
+     *
+     * @return array<string, int|float> The data keyed by date label.
      */
     public function getResult(): array
     {

@@ -1,26 +1,30 @@
 <?php
 
-namespace Anddye\Metrics\Results;
+declare(strict_types=1);
 
-class ValueResult extends Result
+namespace AndrewDyer\Metrics\Results;
+
+/**
+ * Carries the result data for a value metric.
+ */
+final class ValueResult extends Result
 {
     /**
-     * The value of the result.
+     * Creates a new ValueResult.
+     *
+     * @param int|float $result The computed metric value.
      */
-    private float $result;
-
-    /**
-     * Create a new value result instance.
-     */
-    public function __construct(float $result = 0)
-    {
-        $this->result = $result;
+    public function __construct(
+        private readonly int|float $result = 0,
+    ) {
     }
 
     /**
-     * Get the value of the result.
+     * Returns the computed metric value.
+     *
+     * @return int|float The result.
      */
-    public function getResult(): float
+    public function getResult(): int|float
     {
         return $this->result;
     }

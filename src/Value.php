@@ -1,22 +1,38 @@
 <?php
 
-namespace Anddye\Metrics;
+declare(strict_types=1);
 
-use Anddye\Metrics\Results\ValueResult;
+namespace AndrewDyer\Metrics;
+
+use AndrewDyer\Metrics\Contracts\HasDateRange;
+use AndrewDyer\Metrics\Results\ValueResult;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Value extends Metric
+/**
+ * Handles value metric calculations over a date range.
+ */
+abstract class Value extends Metric implements HasDateRange
 {
     /**
-     * Returns an average aggregate between two dates.
+     * Returns a value result with the average of a column over the date range.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $column The column to average.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
-    public function average(Builder $query, string $column, string $dateColumn = null): ValueResult
+    public function average(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
         return $this->aggregate($query, 'avg', $column, $dateColumn);
     }
 
     /**
-     * Returns a count aggregate between two dates.
+     * Returns a value result with the count of records over the date range.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string|null $column The column to count; defaults to the primary key.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
     public function count(Builder $query, ?string $column = null, ?string $dateColumn = null): ValueResult
     {
@@ -24,7 +40,12 @@ abstract class Value extends Metric
     }
 
     /**
-     * Returns a maximum aggregate between two dates.
+     * Returns a value result with the maximum of a column over the date range.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $column The column to find the maximum of.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
     public function max(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
@@ -32,7 +53,12 @@ abstract class Value extends Metric
     }
 
     /**
-     * Returns a minimum aggregate between two dates.
+     * Returns a value result with the minimum of a column over the date range.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $column The column to find the minimum of.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
     public function min(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
@@ -40,7 +66,12 @@ abstract class Value extends Metric
     }
 
     /**
-     * Returns a sum aggregate between two dates.
+     * Returns a value result with the sum of a column over the date range.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $column The column to sum.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
     public function sum(Builder $query, string $column, ?string $dateColumn = null): ValueResult
     {
@@ -48,26 +79,42 @@ abstract class Value extends Metric
     }
 
     /**
-     * Returns a result showing the growth of a model between two dates.
+     * Processes an aggregate query and returns a value result.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param string $function The SQL aggregate function (e.g. count, sum, avg).
+     * @param string|null $column The column to aggregate; defaults to the primary key.
+     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @return ValueResult The value result.
      */
     private function aggregate(Builder $query, string $function, ?string $column = null, ?string $dateColumn = null): ValueResult
     {
         $column = $column ?? $query->getModel()->getQualifiedKeyName();
-
         $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
 
-        $value = with(clone $query)
-            ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
+        $value = (clone $query)
+                    ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
             ->{$function}($column);
 
-        return $this->getResult(round($value, $this->getRoundingPrecision(), $this->getRoundingMode()));
+        $rounded = round((float)$value, $this->getRoundingPrecision(), $this->getRoundingMode());
+
+        return new ValueResult(
+            $this->getRoundingPrecision() === 0 ? (int)$rounded : $rounded,
+        );
     }
 
     /**
-     * Returns a new value result.
+     * Returns a JSON-serializable representation of the value metric.
+     *
+     * @return array<string, mixed> The serialized value metric data.
      */
-    private function getResult(float $value): ValueResult
+    public function jsonSerialize(): array
     {
-        return new ValueResult($value);
+        return array_merge(parent::jsonSerialize(), [
+            'dates' => [
+                'start' => $this->getStartDate(),
+                'end' => $this->getEndDate(),
+            ],
+        ]);
     }
 }

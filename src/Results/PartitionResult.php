@@ -1,24 +1,28 @@
 <?php
 
-namespace Anddye\Metrics\Results;
+declare(strict_types=1);
 
-class PartitionResult extends Result
+namespace AndrewDyer\Metrics\Results;
+
+/**
+ * Carries the result data for a partition metric.
+ */
+final class PartitionResult extends Result
 {
     /**
-     * The value of the result.
+     * Creates a new PartitionResult.
+     *
+     * @param array<string, int|float> $result The partition data keyed by group value.
      */
-    private array $result;
-
-    /**
-     * Create a new partition result instance.
-     */
-    public function __construct(array $result = [])
-    {
-        $this->result = $result;
+    public function __construct(
+        private readonly array $result = [],
+    ) {
     }
 
     /**
-     * Get the value of the result.
+     * Returns the partition result data.
+     *
+     * @return array<string, int|float> The data keyed by group value.
      */
     public function getResult(): array
     {
