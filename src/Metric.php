@@ -6,7 +6,6 @@ namespace AndrewDyer\Metrics;
 
 use AndrewDyer\Metrics\Results\Result;
 use JsonSerializable;
-use ReflectionClass;
 
 /**
  * Handles the base behaviour and serialization for all metric types.
@@ -27,7 +26,7 @@ abstract class Metric implements JsonSerializable
      */
     public function getName(): string
     {
-        return (new ReflectionClass($this))->getShortName();
+        return substr(strrchr(static::class, '\\'), 1);
     }
 
     /**
