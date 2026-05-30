@@ -4,7 +4,7 @@
 
 # Metrics
 
-A PHP library for calculating and aggregating metrics from Eloquent queries.
+A library for calculating and aggregating metrics from Eloquent queries.
 
 ## Introduction
 
