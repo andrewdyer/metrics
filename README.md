@@ -8,7 +8,7 @@ A library for calculating and aggregating metrics from Eloquent queries.
 
 ## Introduction
 
-This library provides a set of metric classes for PHP applications, enabling strongly-typed aggregation and analytics directly from Eloquent queries. Value, Trend, and Partition metric types are included, each returning a structured result object that implements JSON serialisation.
+This library provides strongly typed metric calculations and aggregations from Eloquent queries, including Value, Trend, and Partition metrics that return structured result objects with JSON serialisation support.
 
 ## Prerequisites
 
