@@ -1,6 +1,6 @@
 {
   "name": "andrewdyer/metrics",
-  "description": "",
+  "description": "A library for calculating and aggregating metrics from Eloquent queries",
   "keywords": [],
   "type": "library",
   "license": "MIT",
