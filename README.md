@@ -1,7 +1,3 @@
-<p align="center">
-  Built on top of <a href="https://github.com/andrewdyer/php-package-template">andrewdyer/php-package-template</a>
-</p>
-
 # Metrics
 
 A library for calculating and aggregating metrics from Eloquent queries.
@@ -13,7 +9,7 @@ A library for calculating and aggregating metrics from Eloquent queries.
 
 ## Introduction
 
-This library provides strongly typed metric calculations and aggregations from Eloquent queries, including Value, Trend, and Partition metrics that return structured result objects with JSON serialisation support.
+This library provides strongly typed metric calculations and aggregations from Eloquent queries, including Value, Trend, and Partition metrics that return structured result objects with JSON serialisation support. The package is built on top of [andrewdyer/php-package-template](https://github.com/andrewdyer/php-package-template).
 
 ## Prerequisites
 
