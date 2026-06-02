@@ -6,6 +6,11 @@
 
 A library for calculating and aggregating metrics from Eloquent queries.
 
+[![Latest Stable Version](http://poser.pugx.org/andrewdyer/metrics/v?style=flat-square)](https://packagist.org/packages/andrewdyer/metrics)
+[![Total Downloads](http://poser.pugx.org/andrewdyer/metrics/downloads?style=flat-square)](https://packagist.org/packages/andrewdyer/metrics)
+[![License](http://poser.pugx.org/andrewdyer/metrics/license?style=flat-square)](https://packagist.org/packages/andrewdyer/metrics)
+[![PHP Version Require](http://poser.pugx.org/andrewdyer/metrics/require/php?style=flat-square)](https://packagist.org/packages/andrewdyer/metrics)
+
 ## Introduction
 
 This library provides strongly typed metric calculations and aggregations from Eloquent queries, including Value, Trend, and Partition metrics that return structured result objects with JSON serialisation support.
