@@ -22,11 +22,32 @@ This library provides strongly typed metric calculations and aggregations from E
 composer require andrewdyer/metrics
 ```
 
-## Metric Types
+## Getting Started
 
-### Value
+### 1. Set up Eloquent
 
-A `Value` metric calculates a single aggregate — count, sum, average, minimum, or maximum — over a date range.
+This library requires an Eloquent connection. In a Laravel application this is configured automatically. Outside of Laravel, bootstrap Eloquent using the Capsule manager:
+
+```php
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule();
+
+$capsule->addConnection([
+    'driver'   => 'mysql',
+    'host'     => '127.0.0.1',
+    'database' => 'my_database',
+    'username' => 'root',
+    'password' => '',
+    'charset'  => 'utf8',
+    'prefix'   => '',
+]);
+
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+```
+
+### 2. Create a metric
 
 Extend `Value` and implement `calculate()` to define the query, and `getStartDate()` / `getEndDate()` to define the date range:
 
@@ -54,23 +75,105 @@ class TotalNewUsers extends Value
 }
 ```
 
-#### Available aggregates
+## Usage
+
+### Calculating a metric
+
+Call `calculate()` on any metric instance to run the query and return a typed result:
+
+```php
+$metric = new TotalNewUsers();
+$result = $metric->calculate();
+
+$result->getResult(); // e.g. 42
+```
+
+### JSON serialisation
+
+All result objects implement `JsonSerializable`:
+
+```php
+json_encode($metric->calculate());
+// {"result": 42}
+```
+
+### Customising the metric name and description
+
+Override `getName()` and `getDescription()` on any metric to provide a human-readable label:
+
+```php
+public function getName(): string
+{
+    return 'Total New Users';
+}
+
+public function getDescription(): string
+{
+    return 'The total number of users who signed up this month.';
+}
+```
+
+### Rounding
+
+Override `getRoundingPrecision()` and `getRoundingMode()` to control how aggregate values are rounded:
+
+```php
+public function getRoundingPrecision(): int
+{
+    return 2;
+}
+
+public function getRoundingMode(): int
+{
+    return PHP_ROUND_HALF_UP;
+}
+```
+
+## Metric Types
+
+### Value
+
+A `Value` metric calculates a single aggregate over a date range. An optional `$dateColumn` argument overrides the default `created_at` column.
+
+#### Count
+
+Returns the number of records within the date range:
 
 ```php
 $this->count(User::query());
-$this->sum(User::query(), 'revenue');
-$this->average(User::query(), 'revenue');
-$this->min(User::query(), 'revenue');
-$this->max(User::query(), 'revenue');
 ```
 
-An optional `$dateColumn` argument can be passed to any aggregate to override the default `created_at` column:
+#### Sum
+
+Totals the values of a column across all matching records:
 
 ```php
-$this->count(User::query(), null, 'activated_at');
+$this->sum(User::query(), 'revenue');
 ```
 
----
+#### Average
+
+Calculates the mean value of a column across all matching records:
+
+```php
+$this->average(User::query(), 'revenue');
+```
+
+#### Minimum
+
+Returns the smallest value of a column within the date range:
+
+```php
+$this->min(User::query(), 'revenue');
+```
+
+#### Maximum
+
+Returns the largest value of a column within the date range:
+
+```php
+$this->max(User::query(), 'revenue');
+```
 
 ### Trend
 
@@ -108,6 +211,15 @@ class UserSignupsOverTime extends Trend
 }
 ```
 
+Calculating the metric returns a keyed array of labels to aggregate values:
+
+```php
+$metric = new UserSignupsOverTime();
+$result = $metric->calculate();
+
+$result->getResult(); // ['January 2026' => 12, 'February 2026' => 9, ...]
+```
+
 #### Supported frequencies
 
 ```php
@@ -116,17 +228,45 @@ Frequency::Weekly
 Frequency::Monthly
 ```
 
-#### Available aggregates
+#### Count
+
+Tracks how many records fall within each period of the date range:
 
 ```php
 $this->count(User::query(), null, 'created_at');
-$this->sum(User::query(), 'revenue', 'created_at');
-$this->average(User::query(), 'revenue', 'created_at');
-$this->min(User::query(), 'revenue', 'created_at');
-$this->max(User::query(), 'revenue', 'created_at');
 ```
 
----
+#### Sum
+
+Totals a column's values for each period across the date range:
+
+```php
+$this->sum(User::query(), 'revenue', 'created_at');
+```
+
+#### Average
+
+Calculates the mean value of a column for each period in the range:
+
+```php
+$this->average(User::query(), 'revenue', 'created_at');
+```
+
+#### Minimum
+
+Returns the lowest value of a column recorded within each period:
+
+```php
+$this->min(User::query(), 'revenue', 'created_at');
+```
+
+#### Maximum
+
+Returns the highest value of a column recorded within each period:
+
+```php
+$this->max(User::query(), 'revenue', 'created_at');
+```
 
 ### Partition
 
@@ -158,33 +298,7 @@ class UsersByCountry extends Partition
 }
 ```
 
-#### Available aggregates
-
-```php
-$this->count(User::query(), 'country');
-$this->sum(User::query(), 'country', 'revenue');
-$this->average(User::query(), 'country', 'revenue');
-```
-
-## Usage
-
-### Calculating a metric
-
-Call `calculate()` on any metric instance to run the query and return a typed result:
-
-```php
-$metric = new TotalNewUsers();
-$result = $metric->calculate();
-
-$result->getResult(); // int|float
-```
-
-```php
-$metric = new UserSignupsOverTime();
-$result = $metric->calculate();
-
-$result->getResult(); // ['January 2026' => 12, 'February 2026' => 9, ...]
-```
+Calculating the metric returns a keyed array of group labels to aggregate values:
 
 ```php
 $metric = new UsersByCountry();
@@ -193,60 +307,40 @@ $result = $metric->calculate();
 $result->getResult(); // ['GB' => 42, 'US' => 31, 'DE' => 14]
 ```
 
-### JSON serialisation
+#### Count
 
-All result objects implement `JsonSerializable`:
-
-```php
-json_encode($metric->calculate());
-// {"result": 42}
-
-json_encode($metric->calculate());
-// {"result": {"January 2026": 12, "February 2026": 9}}
-```
-
-### Customising the metric name and description
-
-Override `getName()` and `getDescription()` on any metric to provide a human-readable label:
+Groups records by a column and counts how many fall into each category:
 
 ```php
-public function getName(): string
-{
-    return 'Total New Users';
-}
-
-public function getDescription(): string
-{
-    return 'The total number of users who signed up this month.';
-}
+$this->count(User::query(), 'country');
 ```
 
-### Rounding
+#### Sum
 
-Override `getRoundingPrecision()` and `getRoundingMode()` to control how aggregate values are rounded:
+Groups records by a column and totals a second column within each group:
 
 ```php
-public function getRoundingPrecision(): int
-{
-    return 2;
-}
-
-public function getRoundingMode(): int
-{
-    return PHP_ROUND_HALF_UP;
-}
+$this->sum(User::query(), 'country', 'revenue');
 ```
 
-## Database support
+#### Average
+
+Groups records by a column and calculates the mean of a second column per group:
+
+```php
+$this->average(User::query(), 'country', 'revenue');
+```
+
+## Database Support
 
 The following database drivers are supported:
 
-| Driver     | Minimum Version |
-| ---------- | --------------- |
-| MySQL      | 5.7+            |
-| MariaDB    | 10.2+           |
-| SQLite     | 3.38.0+         |
-| PostgreSQL | 9.4+            |
+| Driver | Minimum Version |
+| - | |
+| MySQL | 5.7+ |
+| MariaDB | 10.2+ |
+| SQLite | 3.38.0+ |
+| PostgreSQL | 9.4+ |
 
 ## License
 
