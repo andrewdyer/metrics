@@ -271,9 +271,11 @@ $this->max(User::query(), 'revenue', 'created_at');
 
 ### Partition
 
-A `Partition` metric calculates an aggregate grouped by a categorical column, returning a key-value breakdown.
+A `Partition` metric calculates an aggregate grouped by a categorical column, returning a key-value breakdown. Results are filtered to the configured date range.
 
-Extend `Partition` and implement `calculate()`:
+When the model uses timestamps, the date filter defaults to `created_at`. When the model does not use timestamps, no date filter is applied unless an explicit `$dateColumn` is passed.
+
+Extend `Partition` and implement `calculate()`, `getStartDate()`, and `getEndDate()`:
 
 ```php
 use AndrewDyer\Metrics\Partition;
@@ -314,6 +316,12 @@ Groups records by a column and counts how many fall into each category:
 
 ```php
 $this->count(User::query(), 'country');
+```
+
+To filter by a specific date column, pass it explicitly:
+
+```php
+$this->count(User::query(), 'country', null, 'registered_at');
 ```
 
 #### Sum
