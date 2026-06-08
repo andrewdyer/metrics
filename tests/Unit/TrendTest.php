@@ -8,9 +8,12 @@ use AndrewDyer\Metrics\Enums\Frequency;
 use AndrewDyer\Metrics\Results\TrendResult;
 use AndrewDyer\Metrics\Tests\AbstractTestCase;
 use AndrewDyer\Metrics\Tests\Support\Concerns\HasOrders;
+use AndrewDyer\Metrics\Tests\Support\Concerns\HasProducts;
 use AndrewDyer\Metrics\Tests\Support\Metrics\Trend\TestTrendMetric;
 use AndrewDyer\Metrics\Tests\Support\Models\Order;
+use AndrewDyer\Metrics\Tests\Support\Models\Product;
 use DateTimeImmutable;
+use InvalidArgumentException;
 
 /**
  * Unit tests for Trend.
@@ -18,6 +21,7 @@ use DateTimeImmutable;
 final class TrendTest extends AbstractTestCase
 {
     use HasOrders;
+    use HasProducts;
 
     /**
      * Builds the test database and seeds order data.
@@ -27,11 +31,14 @@ final class TrendTest extends AbstractTestCase
         parent::setUp();
 
         $this->migrateOrdersTable();
+        $this->migrateProductsTable();
 
         Order::create(['total' => 100.00, 'status' => 'complete', 'country' => 'GB', 'created_at' => '2026-01-15']);
         Order::create(['total' => 200.00, 'status' => 'complete', 'country' => 'US', 'created_at' => '2026-01-20']);
         Order::create(['total' => 50.00, 'status' => 'pending', 'country' => 'GB', 'created_at' => '2026-02-10']);
         Order::create(['total' => 300.00, 'status' => 'complete', 'country' => 'DE', 'created_at' => '2026-03-05']);
+
+        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
     }
 
     /**
@@ -40,6 +47,7 @@ final class TrendTest extends AbstractTestCase
     protected function tearDown(): void
     {
         $this->dropOrdersTable();
+        $this->dropProductsTable();
     }
 
     /**
@@ -194,5 +202,39 @@ final class TrendTest extends AbstractTestCase
         $this->assertSame('2026-01-01', $json['dates']['start']);
         $this->assertSame('2026-12-31', $json['dates']['end']);
         $this->assertSame(Frequency::Monthly, $json['frequency']);
+    }
+
+    /**
+     * Asserts that counting on a model without timestamps throws InvalidArgumentException.
+     */
+    public function testCountWithoutTimestampsThrowsException(): void
+    {
+        $metric = new TestTrendMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+            Frequency::Monthly,
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not use timestamps');
+
+        $metric->count(Product::query());
+    }
+
+    /**
+     * Asserts that passing an explicit date column applies date filtering correctly.
+     */
+    public function testCountWithExplicitDateColumnFiltersCorrectly(): void
+    {
+        $metric = new TestTrendMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-03-31'),
+            Frequency::Monthly,
+        );
+
+        $result = $metric->count(Order::query(), null, 'created_at');
+
+        $this->assertInstanceOf(TrendResult::class, $result);
+        $this->assertCount(3, $result->getResult());
     }
 }

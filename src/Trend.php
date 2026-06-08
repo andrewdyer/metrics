@@ -11,6 +11,7 @@ use AndrewDyer\Metrics\Results\TrendResult;
 use AndrewDyer\Metrics\Values\Period;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use InvalidArgumentException;
 
 /**
  * Handles trend metric calculations over a date range at a given frequency.
@@ -29,8 +30,9 @@ abstract class Trend extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to average.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     public function average(Builder $query, string $column, ?string $dateColumn = null): TrendResult
     {
@@ -42,8 +44,9 @@ abstract class Trend extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string|null $column The column to count; defaults to the primary key.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     public function count(Builder $query, ?string $column = null, ?string $dateColumn = null): TrendResult
     {
@@ -55,8 +58,9 @@ abstract class Trend extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to find the maximum of.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     public function max(Builder $query, string $column, ?string $dateColumn = null): TrendResult
     {
@@ -68,8 +72,9 @@ abstract class Trend extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to find the minimum of.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     public function min(Builder $query, string $column, ?string $dateColumn = null): TrendResult
     {
@@ -81,8 +86,9 @@ abstract class Trend extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to sum.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     public function sum(Builder $query, string $column, ?string $dateColumn = null): TrendResult
     {
@@ -95,21 +101,33 @@ abstract class Trend extends Metric implements HasDateRange
      * @param Builder $query The Eloquent query builder instance.
      * @param string $function The SQL aggregate function (e.g. count, sum, avg).
      * @param string|null $column The column to aggregate; defaults to the primary key.
-     * @param string|null $dateColumn The date column to group by; defaults to created_at.
+     * @param string|null $dateColumn The date column to group by; defaults to created_at when timestamps are enabled, or throws when no column can be resolved.
      * @return TrendResult The trend result.
+     * @throws InvalidArgumentException When no date column can be resolved for a model without timestamps.
      */
     private function aggregate(Builder $query, string $function, ?string $column = null, ?string $dateColumn = null): TrendResult
     {
-        $column = $column ?? $query->getModel()->getQualifiedKeyName();
+        $model = $query->getModel();
+        $column = $column ?? $model->getQualifiedKeyName();
         $wrappedColumn = $query->getQuery()->getGrammar()->wrap($column);
-        $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
+
+        $resolvedDateColumn = $dateColumn ?? ($model->usesTimestamps() ? $model->getQualifiedCreatedAtColumn() : null);
+
+        if ($resolvedDateColumn === null) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'A date column must be specified for [%s] because it does not use timestamps.',
+                    $model::class,
+                ),
+            );
+        }
 
         $period = new Period($this->getStartDate(), $this->getEndDate(), $this->getFrequency());
-        $expression = DateExpressionFactory::create($query, $dateColumn, $this->getFrequency());
+        $expression = DateExpressionFactory::create($query, $resolvedDateColumn, $this->getFrequency());
 
         $results = (clone $query)
             ->select(new Expression("{$expression} as date, {$function}({$wrappedColumn}) as aggregate"))
-            ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
+            ->whereBetween($resolvedDateColumn, [$this->getStartDate(), $this->getEndDate()])
             ->groupBy(new Expression($expression->getValue()))
             ->orderBy('date')
             ->get();

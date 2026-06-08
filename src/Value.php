@@ -18,7 +18,7 @@ abstract class Value extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to average.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return ValueResult The value result.
      */
     public function average(Builder $query, string $column, ?string $dateColumn = null): ValueResult
@@ -31,7 +31,7 @@ abstract class Value extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string|null $column The column to count; defaults to the primary key.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return ValueResult The value result.
      */
     public function count(Builder $query, ?string $column = null, ?string $dateColumn = null): ValueResult
@@ -44,7 +44,7 @@ abstract class Value extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to find the maximum of.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return ValueResult The value result.
      */
     public function max(Builder $query, string $column, ?string $dateColumn = null): ValueResult
@@ -57,7 +57,7 @@ abstract class Value extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to find the minimum of.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return ValueResult The value result.
      */
     public function min(Builder $query, string $column, ?string $dateColumn = null): ValueResult
@@ -70,7 +70,7 @@ abstract class Value extends Metric implements HasDateRange
      *
      * @param Builder $query The Eloquent query builder instance.
      * @param string $column The column to sum.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return ValueResult The value result.
      */
     public function sum(Builder $query, string $column, ?string $dateColumn = null): ValueResult
@@ -84,17 +84,23 @@ abstract class Value extends Metric implements HasDateRange
      * @param Builder $query The Eloquent query builder instance.
      * @param string $function The SQL aggregate function (e.g. count, sum, avg).
      * @param string|null $column The column to aggregate; defaults to the primary key.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by; only applied when timestamps are enabled or an explicit column is given.
      * @return ValueResult The value result.
      */
     private function aggregate(Builder $query, string $function, ?string $column = null, ?string $dateColumn = null): ValueResult
     {
-        $column = $column ?? $query->getModel()->getQualifiedKeyName();
-        $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
+        $model = $query->getModel();
+        $column = $column ?? $model->getQualifiedKeyName();
 
-        $value = (clone $query)
-            ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
-            ->{$function}($column);
+        $resolvedDateColumn = $dateColumn ?? ($model->usesTimestamps() ? $model->getQualifiedCreatedAtColumn() : null);
+
+        $baseQuery = clone $query;
+
+        if ($resolvedDateColumn !== null) {
+            $baseQuery->whereBetween($resolvedDateColumn, [$this->getStartDate(), $this->getEndDate()]);
+        }
+
+        $value = $baseQuery->{$function}($column);
 
         if ($value === null) {
             return new ValueResult(0);

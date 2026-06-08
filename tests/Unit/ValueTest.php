@@ -7,8 +7,10 @@ namespace AndrewDyer\Metrics\Tests\Unit;
 use AndrewDyer\Metrics\Results\ValueResult;
 use AndrewDyer\Metrics\Tests\AbstractTestCase;
 use AndrewDyer\Metrics\Tests\Support\Concerns\HasOrders;
+use AndrewDyer\Metrics\Tests\Support\Concerns\HasProducts;
 use AndrewDyer\Metrics\Tests\Support\Metrics\Value\TestValueMetric;
 use AndrewDyer\Metrics\Tests\Support\Models\Order;
+use AndrewDyer\Metrics\Tests\Support\Models\Product;
 use DateTimeImmutable;
 
 /**
@@ -17,6 +19,7 @@ use DateTimeImmutable;
 final class ValueTest extends AbstractTestCase
 {
     use HasOrders;
+    use HasProducts;
 
     /**
      * The metric start date.
@@ -36,6 +39,7 @@ final class ValueTest extends AbstractTestCase
         parent::setUp();
 
         $this->migrateOrdersTable();
+        $this->migrateProductsTable();
 
         $this->start = new DateTimeImmutable('2026-01-01');
         $this->end = new DateTimeImmutable('2026-12-31');
@@ -44,6 +48,10 @@ final class ValueTest extends AbstractTestCase
         Order::create(['total' => 200.00, 'status' => 'complete', 'country' => 'US', 'created_at' => '2026-03-15']);
         Order::create(['total' => 50.00, 'status' => 'pending', 'country' => 'GB', 'created_at' => '2026-06-10']);
         Order::create(['total' => 300.00, 'status' => 'complete', 'country' => 'DE', 'created_at' => '2025-12-31']);
+
+        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
+        Product::create(['name' => 'Gadget', 'category' => 'tools', 'price' => 20.00]);
+        Product::create(['name' => 'Donut', 'category' => 'food', 'price' => 5.00]);
     }
 
     /**
@@ -52,6 +60,7 @@ final class ValueTest extends AbstractTestCase
     protected function tearDown(): void
     {
         $this->dropOrdersTable();
+        $this->dropProductsTable();
     }
 
     /**
@@ -173,5 +182,37 @@ final class ValueTest extends AbstractTestCase
 
         $this->assertSame('2026-01-01', $json['dates']['start']);
         $this->assertSame('2026-12-31', $json['dates']['end']);
+    }
+
+    /**
+     * Asserts that count on a model without timestamps returns all records without date filtering.
+     */
+    public function testCountWithoutTimestampsReturnsAllRecords(): void
+    {
+        $metric = new TestValueMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $result = $metric->count(Product::query());
+
+        $this->assertInstanceOf(ValueResult::class, $result);
+        $this->assertSame(3, $result->getResult());
+    }
+
+    /**
+     * Asserts that passing an explicit date column applies date filtering correctly.
+     */
+    public function testCountWithExplicitDateColumnFiltersCorrectly(): void
+    {
+        $metric = new TestValueMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-04-30'),
+        );
+
+        $result = $metric->count(Order::query(), null, 'created_at');
+
+        $this->assertInstanceOf(ValueResult::class, $result);
+        $this->assertSame(2, $result->getResult());
     }
 }
