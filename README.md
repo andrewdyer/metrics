@@ -134,7 +134,7 @@ public function getRoundingMode(): int
 
 ### Value
 
-A `Value` metric calculates a single aggregate over a date range. An optional `$dateColumn` argument overrides the default `created_at` column.
+A `Value` metric calculates a single aggregate over a date range. When the model uses timestamps, the date filter defaults to `created_at`. When the model does not use timestamps, no date filter is applied unless an explicit `$dateColumn` is passed.
 
 #### Count
 
@@ -192,6 +192,8 @@ $this->max(User::query(), 'revenue');
 ### Trend
 
 A `Trend` metric calculates an aggregate grouped over time at a given frequency. Missing dates within the range are automatically filled with zero values.
+
+When the model uses timestamps, the date column defaults to `created_at`. When the model does not use timestamps, an explicit `$dateColumn` must be passed or an `InvalidArgumentException` is thrown.
 
 Extend `Trend` and implement `calculate()`, `getStartDate()`, `getEndDate()`, and `getFrequency()`:
 
