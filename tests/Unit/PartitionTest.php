@@ -7,8 +7,10 @@ namespace AndrewDyer\Metrics\Tests\Unit;
 use AndrewDyer\Metrics\Results\PartitionResult;
 use AndrewDyer\Metrics\Tests\AbstractTestCase;
 use AndrewDyer\Metrics\Tests\Support\Concerns\HasOrders;
+use AndrewDyer\Metrics\Tests\Support\Concerns\HasProducts;
 use AndrewDyer\Metrics\Tests\Support\Metrics\Partition\TestPartitionMetric;
 use AndrewDyer\Metrics\Tests\Support\Models\Order;
+use AndrewDyer\Metrics\Tests\Support\Models\Product;
 use DateTimeImmutable;
 
 /**
@@ -17,6 +19,7 @@ use DateTimeImmutable;
 final class PartitionTest extends AbstractTestCase
 {
     use HasOrders;
+    use HasProducts;
 
     /**
      * The metric start date.
@@ -36,6 +39,7 @@ final class PartitionTest extends AbstractTestCase
         parent::setUp();
 
         $this->migrateOrdersTable();
+        $this->migrateProductsTable();
 
         $this->start = new DateTimeImmutable('2026-01-01');
         $this->end = new DateTimeImmutable('2026-12-31');
@@ -44,6 +48,10 @@ final class PartitionTest extends AbstractTestCase
         Order::create(['total' => 200.00, 'status' => 'complete', 'country' => 'US', 'created_at' => '2026-03-15']);
         Order::create(['total' => 50.00, 'status' => 'pending', 'country' => 'GB', 'created_at' => '2026-06-10']);
         Order::create(['total' => 300.00, 'status' => 'complete', 'country' => 'DE', 'created_at' => '2026-09-01']);
+
+        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
+        Product::create(['name' => 'Gadget', 'category' => 'tools', 'price' => 20.00]);
+        Product::create(['name' => 'Donut', 'category' => 'food', 'price' => 5.00]);
     }
 
     /**
@@ -52,6 +60,7 @@ final class PartitionTest extends AbstractTestCase
     protected function tearDown(): void
     {
         $this->dropOrdersTable();
+        $this->dropProductsTable();
     }
 
     /**
@@ -121,5 +130,77 @@ final class PartitionTest extends AbstractTestCase
         );
 
         $this->assertSame('TestPartitionMetric', $metric->getName());
+    }
+
+    /**
+     * Asserts that records outside the date range are excluded from results.
+     */
+    public function testRecordsOutsideDateRangeAreExcluded(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-06-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $result = $metric->count(Order::query(), 'country');
+
+        $this->assertInstanceOf(PartitionResult::class, $result);
+        $data = $result->getResult();
+
+        $this->assertArrayNotHasKey('US', $data);
+        $this->assertArrayHasKey('GB', $data);
+        $this->assertArrayHasKey('DE', $data);
+    }
+
+    /**
+     * Asserts that jsonSerialize formats the start and end dates as strings.
+     */
+    public function testJsonSerializeDateFormattedAsString(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $json = $metric->jsonSerialize();
+
+        $this->assertSame('2026-01-01', $json['dates']['start']);
+        $this->assertSame('2026-12-31', $json['dates']['end']);
+    }
+
+    /**
+     * Asserts that counting on a model without timestamps returns all records without date filtering.
+     */
+    public function testCountWithoutTimestampsReturnsAllRecords(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $result = $metric->count(Product::query(), 'category');
+
+        $this->assertInstanceOf(PartitionResult::class, $result);
+        $this->assertEqualsCanonicalizing(['tools' => 2, 'food' => 1], $result->getResult());
+    }
+
+    /**
+     * Asserts that passing an explicit date column applies date filtering correctly.
+     */
+    public function testCountWithExplicitDateColumnFiltersCorrectly(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-06-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $result = $metric->count(Order::query(), 'country', null, 'created_at');
+
+        $this->assertInstanceOf(PartitionResult::class, $result);
+        $data = $result->getResult();
+
+        $this->assertArrayNotHasKey('US', $data);
+        $this->assertArrayHasKey('GB', $data);
+        $this->assertArrayHasKey('DE', $data);
     }
 }

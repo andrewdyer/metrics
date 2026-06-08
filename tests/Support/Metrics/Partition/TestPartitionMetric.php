@@ -6,7 +6,6 @@ namespace AndrewDyer\Metrics\Tests\Support\Metrics\Partition;
 
 use AndrewDyer\Metrics\Partition;
 use AndrewDyer\Metrics\Results\PartitionResult;
-use AndrewDyer\Metrics\Results\Result;
 use DateTimeImmutable;
 
 /**
@@ -29,9 +28,9 @@ class TestPartitionMetric extends Partition
     /**
      * Returns an empty partition result.
      *
-     * @return Result The partition result.
+     * @return PartitionResult The partition result.
      */
-    public function calculate(): Result
+    public function calculate(): PartitionResult
     {
         return new PartitionResult();
     }
