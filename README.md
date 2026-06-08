@@ -144,6 +144,19 @@ Returns the number of records within the date range:
 $this->count(User::query());
 ```
 
+To filter by a specific date column, pass it explicitly:
+
+```php
+$this->count(User::query(), null, 'published_at');
+```
+
+On models without timestamps, no date filter is applied unless an explicit column is given:
+
+```php
+$this->count(Product::query()); // no date filter — all records returned
+$this->count(Product::query(), null, 'released_at'); // filtered by released_at
+```
+
 #### Sum
 
 Totals the values of a column across all matching records:
