@@ -39,6 +39,7 @@ final class ValueTest extends AbstractTestCase
         parent::setUp();
 
         $this->migrateOrdersTable();
+        $this->migrateProductsTable();
 
         $this->start = new DateTimeImmutable('2026-01-01');
         $this->end = new DateTimeImmutable('2026-12-31');
@@ -47,6 +48,10 @@ final class ValueTest extends AbstractTestCase
         Order::create(['total' => 200.00, 'status' => 'complete', 'country' => 'US', 'created_at' => '2026-03-15']);
         Order::create(['total' => 50.00, 'status' => 'pending', 'country' => 'GB', 'created_at' => '2026-06-10']);
         Order::create(['total' => 300.00, 'status' => 'complete', 'country' => 'DE', 'created_at' => '2025-12-31']);
+
+        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
+        Product::create(['name' => 'Gadget', 'category' => 'tools', 'price' => 20.00]);
+        Product::create(['name' => 'Donut', 'category' => 'food', 'price' => 5.00]);
     }
 
     /**
@@ -55,6 +60,7 @@ final class ValueTest extends AbstractTestCase
     protected function tearDown(): void
     {
         $this->dropOrdersTable();
+        $this->dropProductsTable();
     }
 
     /**
@@ -183,12 +189,6 @@ final class ValueTest extends AbstractTestCase
      */
     public function testCountWithoutTimestampsReturnsAllRecords(): void
     {
-        $this->migrateProductsTable();
-
-        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
-        Product::create(['name' => 'Gadget', 'category' => 'tools', 'price' => 20.00]);
-        Product::create(['name' => 'Donut', 'category' => 'food', 'price' => 5.00]);
-
         $metric = new TestValueMetric(
             new DateTimeImmutable('2026-01-01'),
             new DateTimeImmutable('2026-12-31'),
@@ -198,8 +198,6 @@ final class ValueTest extends AbstractTestCase
 
         $this->assertInstanceOf(ValueResult::class, $result);
         $this->assertSame(3, $result->getResult());
-
-        $this->dropProductsTable();
     }
 
     /**

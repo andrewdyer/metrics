@@ -31,11 +31,14 @@ final class TrendTest extends AbstractTestCase
         parent::setUp();
 
         $this->migrateOrdersTable();
+        $this->migrateProductsTable();
 
         Order::create(['total' => 100.00, 'status' => 'complete', 'country' => 'GB', 'created_at' => '2026-01-15']);
         Order::create(['total' => 200.00, 'status' => 'complete', 'country' => 'US', 'created_at' => '2026-01-20']);
         Order::create(['total' => 50.00, 'status' => 'pending', 'country' => 'GB', 'created_at' => '2026-02-10']);
         Order::create(['total' => 300.00, 'status' => 'complete', 'country' => 'DE', 'created_at' => '2026-03-05']);
+
+        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
     }
 
     /**
@@ -44,6 +47,7 @@ final class TrendTest extends AbstractTestCase
     protected function tearDown(): void
     {
         $this->dropOrdersTable();
+        $this->dropProductsTable();
     }
 
     /**
@@ -205,10 +209,6 @@ final class TrendTest extends AbstractTestCase
      */
     public function testCountWithoutTimestampsThrowsException(): void
     {
-        $this->migrateProductsTable();
-
-        Product::create(['name' => 'Widget', 'category' => 'tools', 'price' => 10.00]);
-
         $metric = new TestTrendMetric(
             new DateTimeImmutable('2026-01-01'),
             new DateTimeImmutable('2026-12-31'),
@@ -219,8 +219,6 @@ final class TrendTest extends AbstractTestCase
         $this->expectExceptionMessage('does not use timestamps');
 
         $metric->count(Product::query());
-
-        $this->dropProductsTable();
     }
 
     /**
