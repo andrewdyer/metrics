@@ -185,7 +185,7 @@ final class PartitionTest extends AbstractTestCase
     }
 
     /**
-     * Asserts that passing an explicit date column applies date filtering on models without timestamps.
+     * Asserts that passing an explicit date column applies date filtering correctly.
      */
     public function testCountWithExplicitDateColumnFiltersCorrectly(): void
     {
