@@ -20,7 +20,7 @@ abstract class Partition extends Metric implements HasDateRange
      * @param Builder $query The Eloquent query builder instance.
      * @param string $groupBy The column to group results by.
      * @param string|null $column The column to count; defaults to the primary key.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return PartitionResult The partition result.
      */
     public function count(Builder $query, string $groupBy, ?string $column = null, ?string $dateColumn = null): PartitionResult
@@ -34,7 +34,7 @@ abstract class Partition extends Metric implements HasDateRange
      * @param Builder $query The Eloquent query builder instance.
      * @param string $groupBy The column to group results by.
      * @param string $column The column to sum.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return PartitionResult The partition result.
      */
     public function sum(Builder $query, string $groupBy, string $column, ?string $dateColumn = null): PartitionResult
@@ -48,7 +48,7 @@ abstract class Partition extends Metric implements HasDateRange
      * @param Builder $query The Eloquent query builder instance.
      * @param string $groupBy The column to group results by.
      * @param string $column The column to average.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by.
      * @return PartitionResult The partition result.
      */
     public function average(Builder $query, string $groupBy, string $column, ?string $dateColumn = null): PartitionResult
@@ -63,20 +63,26 @@ abstract class Partition extends Metric implements HasDateRange
      * @param string $function The SQL aggregate function (e.g. count, sum, avg).
      * @param string $groupBy The column to group results by.
      * @param string|null $column The column to aggregate; defaults to the primary key.
-     * @param string|null $dateColumn The date column to filter by; defaults to created_at.
+     * @param string|null $dateColumn The date column to filter by; only applied when timestamps are enabled or an explicit column is given.
      * @return PartitionResult The partition result.
      */
     private function aggregate(Builder $query, string $function, string $groupBy, ?string $column = null, ?string $dateColumn = null): PartitionResult
     {
-        $column = $column ?? $query->getModel()->getQualifiedKeyName();
+        $model = $query->getModel();
+        $column = $column ?? $model->getQualifiedKeyName();
         $wrappedColumn = $query->getQuery()->getGrammar()->wrap($column);
-        $dateColumn = $dateColumn ?? $query->getModel()->getQualifiedCreatedAtColumn();
 
-        $results = (clone $query)
+        $resolvedDateColumn = $dateColumn ?? ($model->usesTimestamps() ? $model->getQualifiedCreatedAtColumn() : null);
+
+        $baseQuery = (clone $query)
             ->select($groupBy, new Expression("{$function}({$wrappedColumn}) as aggregate"))
-            ->whereBetween($dateColumn, [$this->getStartDate(), $this->getEndDate()])
-            ->groupBy($groupBy)
-            ->get();
+            ->groupBy($groupBy);
+
+        if ($resolvedDateColumn !== null) {
+            $baseQuery->whereBetween($resolvedDateColumn, [$this->getStartDate(), $this->getEndDate()]);
+        }
+
+        $results = $baseQuery->get();
 
         $segments = explode('.', $groupBy);
         $key = end($segments);
