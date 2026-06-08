@@ -122,4 +122,40 @@ final class PartitionTest extends AbstractTestCase
 
         $this->assertSame('TestPartitionMetric', $metric->getName());
     }
+
+    /**
+     * Asserts that records outside the date range are excluded from results.
+     */
+    public function testRecordsOutsideDateRangeAreExcluded(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-06-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $result = $metric->count(Order::query(), 'country');
+
+        $this->assertInstanceOf(PartitionResult::class, $result);
+        $data = $result->getResult();
+
+        $this->assertArrayNotHasKey('US', $data);
+        $this->assertArrayHasKey('GB', $data);
+        $this->assertArrayHasKey('DE', $data);
+    }
+
+    /**
+     * Asserts that jsonSerialize formats the start and end dates as strings.
+     */
+    public function testJsonSerializeDateFormattedAsString(): void
+    {
+        $metric = new TestPartitionMetric(
+            new DateTimeImmutable('2026-01-01'),
+            new DateTimeImmutable('2026-12-31'),
+        );
+
+        $json = $metric->jsonSerialize();
+
+        $this->assertSame('2026-01-01', $json['dates']['start']);
+        $this->assertSame('2026-12-31', $json['dates']['end']);
+    }
 }
